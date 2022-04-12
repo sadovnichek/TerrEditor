@@ -3,13 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31912.275
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TerrEditor.UI", "TerrEditor.UI\TerrEditor.UI.csproj", "{D42A36EE-1EE6-4B37-952B-2312FE9770EF}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UI", "UI\UI.csproj", "{D42A36EE-1EE6-4B37-952B-2312FE9770EF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TerrEditor.Application", "TerrEditor.Application\TerrEditor.Application.csproj", "{83A3EB85-0C31-4C3A-9535-C26EF6604641}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Application", "Application\Application.csproj", "{83A3EB85-0C31-4C3A-9535-C26EF6604641}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TerrEditor.Infrastructure", "TerrEditor.Infrastructure\TerrEditor.Infrastructure.csproj", "{BDEEA994-FC0D-4E70-A353-98D9AC33CF05}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Infrastructure", "Infrastructure\Infrastructure.csproj", "{BDEEA994-FC0D-4E70-A353-98D9AC33CF05}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TerrEditor.Domain", "TerrEditor.Domain\TerrEditor.Domain.csproj", "{125B28BF-F361-406D-835A-EEE27402C709}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Domain", "Domain\Domain.csproj", "{125B28BF-F361-406D-835A-EEE27402C709}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
