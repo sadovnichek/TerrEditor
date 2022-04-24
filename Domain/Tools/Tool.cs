@@ -4,5 +4,5 @@ public abstract class Tool
 {
     public string Name { get; }
     
-    public string action { get; }
+    public Func<Item, Item> DoAction { get; }
 }
