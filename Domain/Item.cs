@@ -2,7 +2,7 @@
 
 namespace TerrEditor.Domain;
 
-internal class Item
+public class Item
 {
     public Guid Id => Guid.NewGuid();
     public Bitmap Image { get; }

@@ -2,14 +2,14 @@
 
 namespace TerrEditor.Domain
 {
-    class LandscapeObject : ISize, IPicture
+    public interface LandscapeObject : ISize, IPicture
     {
-        public int Height { get; private set; }
-        public int Width { get; private set; }
-        public string Path { get; private set; }
+        public int Height { get; set; }
+        public int Width { get; set; }
+        public string Path { get; set; }
 
-        public string ObjectType;
-        public string ObjectName;
+        public Category ObjectType { get; }
+        public string ObjectName { get; }
 
         //возможно содержит общие методы 
     }

@@ -2,7 +2,7 @@
 
 namespace TerrEditor.Domain
 {
-    interface IPicture
+    public interface IPicture
     {
         string Path { get; set; }
     }

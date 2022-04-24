@@ -1,6 +1,6 @@
 ﻿namespace TerrEditor.Domain;
 
-internal class Category
+public class Category
 {
     public string Name { get; }
 
