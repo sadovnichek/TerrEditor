@@ -6,7 +6,7 @@ public class Highlight
 
     public void HighlightAndCopy(Item item)
     {
-        CurrentObject = item;
+        WorkSpace.CurrentObject = item;
         //buffer.add(o) ??
     }
 }

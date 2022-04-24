@@ -7,11 +7,11 @@ public class Zoom
 
     public void ZoomPlus()
     {
-        CurrCanvas.OtherScale += zoomDelta;
+        WorkSpace.CurrentCanvas.OtherScale += zoomDelta;
     }
 
     public void ZoomMinus()
     {
-        CurrCanvas.OtherScale -= zoomDelta;
+        WorkSpace.CurrentCanvas.OtherScale -= zoomDelta;
     }
 }

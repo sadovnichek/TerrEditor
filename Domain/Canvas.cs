@@ -1,13 +1,15 @@
-﻿namespace TerrEditor.Domain;
+﻿using System.Drawing;
+
+namespace TerrEditor.Domain;
 
 public class Canvas
 {
-    public Sizez Size;
+    public Size Size;
     public Scale Scale;
     public OtherScale OtherScale;
     public List<Item> Objects;
 
-    public Canvas(Sizez size, Scale scale)
+    public Canvas(Size size, Scale scale)
     {
         Size = size;
         Scale = scale;

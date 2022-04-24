@@ -1,4 +1,6 @@
-﻿namespace TerrEditor.Domain;
+﻿using System.Drawing;
+
+namespace TerrEditor.Domain;
 
 public class Brush
 {
@@ -6,6 +8,6 @@ public class Brush
 
     public void Paint(Item item, Point position)
     {
-        CurrCanvas.AddItem(item, position);
+        WorkSpace.CurrentCanvas.AddItem(item, position);
     }
 }

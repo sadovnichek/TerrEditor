@@ -6,6 +6,6 @@ public class Pipette
 
     public void Choose(Item item)
     {
-        CurrentObject = item;
+        WorkSpace.CurrentObject = item;
     }
 }

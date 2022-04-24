@@ -1,4 +1,6 @@
-﻿namespace TerrEditor.Domain;
+﻿using System.Drawing;
+
+namespace TerrEditor.Domain;
 
 public class Eraser : Tool
 {
@@ -6,6 +8,6 @@ public class Eraser : Tool
 
     public void Erase(Item item, Point position)
     {
-        CurrCanvas.DeleteItem(item, position);
+        WorkSpace.CurrentCanvas.DeleteItem(item, position);
     }
 }
