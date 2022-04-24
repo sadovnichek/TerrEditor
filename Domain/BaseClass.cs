@@ -2,7 +2,7 @@
 
 namespace TerrEditor.Domain
 {
-    public interface LandscapeObject : ISize, IPicture
+    public interface ILandscapeObject : ISize, IPicture
     {
         public int Height { get; set; }
         public int Width { get; set; }
