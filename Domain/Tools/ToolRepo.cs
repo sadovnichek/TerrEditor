@@ -1,13 +1,13 @@
 ﻿namespace TerrEditor.Domain;
 
-public class ToolRepo : IRepo<Tool>
+public class ToolRepo : IRepo<ITool>
 {
-    public void Save(Tool obj)
+    public void Save(ITool obj)
     {
         throw new NotImplementedException();
     }
 
-    public Tool Get(Guid id)
+    public ITool Get(Guid id)
     {
         throw new NotImplementedException();
     }

@@ -1,17 +1,22 @@
 ﻿namespace TerrEditor.Domain;
 
-public class Zoom
+public class Zoom : ITool
 {
-    public string Name = "Zoom";
+    public string Name => "Zoom";
     private double zoomDelta = 0.2;
 
-    public void ZoomPlus()
+    private void ZoomPlus()
     {
-        WorkSpace.CurrentCanvas.OtherScale += zoomDelta;
+        throw new NotImplementedException();
     }
 
-    public void ZoomMinus()
+    private void ZoomMinus()
     {
-        WorkSpace.CurrentCanvas.OtherScale -= zoomDelta;
+        throw new NotImplementedException();
+    }
+
+    public void DoAction(Item item)
+    {
+        throw new NotImplementedException();
     }
 }

@@ -2,12 +2,12 @@
 
 namespace TerrEditor.Domain;
 
-public class Brush
+public class Brush : ITool
 {
-    public string Name = "Brush";
+    public string Name => "Brush";
 
-    public void Paint(Item item, Point position)
+    public void DoAction(Item item)
     {
-        WorkSpace.CurrentCanvas.AddItem(item, position);
+        throw new NotImplementedException();
     }
 }

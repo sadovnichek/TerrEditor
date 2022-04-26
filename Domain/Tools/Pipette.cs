@@ -1,11 +1,10 @@
 ﻿namespace TerrEditor.Domain;
 
-public class Pipette
+public class Pipette : ITool
 {
-    public string Name = "Pipette";
-
-    public void Choose(Item item)
+    public string Name => "Pipette";
+    public void DoAction(Item item)
     {
-        WorkSpace.CurrentObject = item;
+        throw new NotImplementedException();
     }
 }

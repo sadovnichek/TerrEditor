@@ -2,12 +2,12 @@
 
 namespace TerrEditor.Domain;
 
-public class Eraser : Tool
+public class Eraser : ITool
 {
-    public string Name = "Eraser";
+    public string Name => "Eraser";
 
-    public void Erase(Item item, Point position)
+    public void DoAction(Item item)
     {
-        WorkSpace.CurrentCanvas.DeleteItem(item, position);
+        throw new NotImplementedException();
     }
 }

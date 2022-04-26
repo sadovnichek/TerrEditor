@@ -1,8 +1,8 @@
 ﻿namespace TerrEditor.Domain;
 
-public abstract class Tool
+public interface ITool
 {
     public string Name { get; }
-    
-    public Func<Item, Item> DoAction { get; }
+
+    void DoAction(Item item);
 }
