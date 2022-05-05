@@ -5,9 +5,10 @@ namespace TerrEditor.Domain;
 public class Eraser : ITool
 {
     public string Name => "Eraser";
+    public Canvas? canvasItem;
 
     public void DoAction(Item item)
     {
-        throw new NotImplementedException();
+        canvasItem.DeleteItem(item,item.Location);
     }
 }

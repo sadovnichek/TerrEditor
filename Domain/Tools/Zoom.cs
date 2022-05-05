@@ -1,22 +1,32 @@
-﻿namespace TerrEditor.Domain;
+﻿using System.Drawing;
+using System.Drawing.Printing;
+
+namespace TerrEditor.Domain;
 
 public class Zoom : ITool
 {
     public string Name => "Zoom";
-    private double zoomDelta = 0.2;
+    private int zoomDelta = 20;
+    public bool zoom;
 
-    private void ZoomPlus()
+    private Size ZoomPlus(Size size)
     {
-        throw new NotImplementedException();
+        return new Size(size.Width+zoomDelta,size.Height+zoomDelta);
     }
 
-    private void ZoomMinus()
+    private Size ZoomMinus(Size size)
     {
-        throw new NotImplementedException();
+        if (size.Width-zoomDelta<=0||size.Height-zoomDelta<=0)
+        {
+            Console.WriteLine("Size can not be negative");
+            return size;
+
+        }
+        return new Size(size.Width-zoomDelta,size.Height-zoomDelta);;
     }
 
     public void DoAction(Item item)
     {
-        throw new NotImplementedException();
+        item.Size=zoom ? ZoomPlus(item.Size) : ZoomMinus(item.Size);
     }
 }

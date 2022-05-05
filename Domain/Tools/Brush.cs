@@ -8,6 +8,6 @@ public class Brush : ITool
 
     public void DoAction(Item item)
     {
-        throw new NotImplementedException();
+        
     }
 }
