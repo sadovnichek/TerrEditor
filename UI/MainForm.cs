@@ -2,7 +2,7 @@ namespace UI;
 
 public partial class MainForm : Form
 {
-    private PictureBox pictureBox = new();
+    FlowLayoutPanel panel = new FlowLayoutPanel();
     private Rectangle dragBoxFromMouseDown;
     private Image currentSelectedImage;
     private Image tree;
@@ -28,15 +28,14 @@ public partial class MainForm : Form
         var wwidth = Size.Width;
         InitializeComponent();
         WindowState = FormWindowState.Maximized;
-        var layout = GetFlowLayoutPanel();
-        pictureBox.Location = new Point(800, 200);
-        pictureBox.AllowDrop = true;
-        pictureBox.Size = new Size(800, 600);
-        pictureBox.ImageLocation=Directory.GetCurrentDirectory()+@"\land.jpg";
+        panel.Location = new Point(800, 200);
+        panel.AllowDrop = true;
+        panel.Size = new Size(800, 600);
+        //pictureBox.ImageLocation=Directory.GetCurrentDirectory()+@"\land.jpg";
         SetImages();
-        pictureBox.DragOver += DragOver;
-        pictureBox.DragDrop += DragDrop;
-        pictureBox.DragEnter += DragEnter;
+        panel.DragOver += DragOver;
+        panel.DragDrop += DragDrop;
+        panel.DragEnter += DragEnter;
 
         var text = new Label();
         text.Location = new Point(0, 0);
@@ -58,8 +57,7 @@ public partial class MainForm : Form
         Controls.Add(GetStartButton("Zoom",new Point(wwidth,420),Type.Tool,"изменение размера элемента"));
         Controls.Add(GetStartButton("Выход", new Point(1000, 0), Type.Control, "Нажмите, чтобы покинуть программу"));
         Controls.Add(GetStartButton("Фон", new Point(1000, 100), Type.Control, "Нажмите, чтобы сменить фоновое изображение"));
-        Controls.Add(layout); 
-        Controls.Add(pictureBox);
+        Controls.Add(panel);
     }
 
     private void GetElement(object sender, MouseEventArgs e) // mouse down
@@ -92,7 +90,7 @@ public partial class MainForm : Form
             {
                 // screenOffset служить для определения границ экрана
                 screenOffset = SystemInformation.WorkingArea.Location;
-                DragDropEffects dropEffect = clickedButton.DoDragDrop(currentSelectedImage, DragDropEffects.All);
+                var dropEffect = clickedButton.DoDragDrop(currentSelectedImage, DragDropEffects.All);
             }
         }
     }
@@ -106,14 +104,20 @@ public partial class MainForm : Form
         else
         {
             e.Effect = DragDropEffects.None;
-            Cursor = Cursors.Default;
         }
     }
 
     private void DragDrop(object sender, DragEventArgs e)
     {
         if (e.Effect == DragDropEffects.Move)
-            pictureBox.Image = currentSelectedImage;
+        {
+            var newAddedPictureBox = new PictureBox()
+            {
+                Image = currentSelectedImage,
+                Size = new Size(100, 100)
+            };
+            panel.Controls.Add(newAddedPictureBox);
+        }
     }
     
     private void DragLeave(object sender, DragEventArgs e)
