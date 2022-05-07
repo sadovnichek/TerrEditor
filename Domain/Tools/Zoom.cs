@@ -20,7 +20,6 @@ public class Zoom : ITool
         {
             Console.WriteLine("Size can not be negative");
             return size;
-
         }
         return new Size(size.Width-zoomDelta,size.Height-zoomDelta);;
     }

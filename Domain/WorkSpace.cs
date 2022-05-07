@@ -1,18 +1,25 @@
-﻿namespace TerrEditor.Domain;
+﻿using System.Drawing;
+
+namespace TerrEditor.Domain;
 
 public static class WorkSpace
 {
-    public static List<Canvas> Canvases;
-    public static Item CurrentObject;
-    public static ITool CurrentTool;
-    public static Canvas CurrentCanvas;
+    public static Canvas Canvases;
+    public static Item? CurrentObject;
+    public static ITool? CurrentTool;
+    public static Canvas? CurrentCanvas;
 
     static WorkSpace()
     {
-        Canvases = new List<Canvas>();
-        CurrentObject = default(Item);
-        CurrentTool = default(ITool);
+        Canvases = new Canvas(new Size(800,600));
+        CurrentObject = default;
+        CurrentTool = default;
     }
     
     //методы
+    public static void DoAction(Item? item)
+    {
+        CurrentTool.DoAction(item);
+    }
+
 }

@@ -2,13 +2,12 @@
 
 namespace TerrEditor.Domain;
 
-public class Highlight
+public class Highlight:ITool
 {
     public string Name => "Highlight";
-
-    public void HighlightAndCopy(Item item)
+    public void DoAction(Item item)
     {
-        byte r = item.Color.R; 
+        /*byte r = item.Color.R; 
 
         var bmp = new Bitmap(item.Image);
         for (int x = 0; x < bmp.Width; x++)
@@ -20,7 +19,9 @@ public class Highlight
                 bmp.SetPixel(x, y, gotColor);
             }
         }
-        item.Image = bmp;
-        var newItem=Item.Clone(item);
+        item.Image = bmp;*/
+        WorkSpace.CurrentObject = Item.Clone(item);
     }
+
+    
 }
