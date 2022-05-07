@@ -5,6 +5,12 @@ namespace TerrEditor.Domain;
 public class Highlight:ITool
 {
     public string Name => "Highlight";
+    public WorkSpace work;
+
+    public Highlight(WorkSpace space)
+    {
+        work = space;
+    }
     public void DoAction(Item item)
     {
         /*byte r = item.Color.R; 
@@ -20,7 +26,7 @@ public class Highlight:ITool
             }
         }
         item.Image = bmp;*/
-        WorkSpace.CurrentObject = Item.Clone(item);
+        work.CurrentObject = Item.Clone(item);
     }
 
     

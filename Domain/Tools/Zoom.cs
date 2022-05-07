@@ -1,5 +1,4 @@
 ﻿using System.Drawing;
-using System.Drawing.Printing;
 
 namespace TerrEditor.Domain;
 
@@ -8,6 +7,11 @@ public class Zoom : ITool
     public string Name => "Zoom";
     private int zoomDelta = 20;
     public bool zoom;
+    public WorkSpace space;
+    public Zoom(WorkSpace work)
+    {
+        space = work;
+    }
 
     private Size ZoomPlus(Size size)
     {
@@ -26,6 +30,7 @@ public class Zoom : ITool
 
     public void DoAction(Item item)
     {
-        item.Size=zoom ? ZoomPlus(item.Size) : ZoomMinus(item.Size);
+        space.CurrentObject = item;
+        space.CurrentObject!.Size=zoom ? ZoomPlus(item.Size) : ZoomMinus(item.Size);
     }
 }

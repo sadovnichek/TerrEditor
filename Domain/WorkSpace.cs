@@ -2,22 +2,22 @@
 
 namespace TerrEditor.Domain;
 
-public static class WorkSpace
+public  class WorkSpace
 {
-    public static Canvas Canvases;
-    public static Item? CurrentObject;
-    public static ITool? CurrentTool;
-    public static Canvas? CurrentCanvas;
+    public  Item? CurrentObject;
+    public  ITool? CurrentTool;
+    public  Canvas? CurrentCanvas;
+    public Color color;
 
-    static WorkSpace()
+    public WorkSpace()
     {
-        Canvases = new Canvas(new Size(800,600));
+        CurrentCanvas = new Canvas(new Size(800,600));
         CurrentObject = default;
         CurrentTool = default;
     }
     
     //методы
-    public static void DoAction(Item? item)
+    public void DoAction(Item? item)
     {
         CurrentTool.DoAction(item);
     }
