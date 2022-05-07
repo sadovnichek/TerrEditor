@@ -2,20 +2,42 @@ namespace UI;
 
 public partial class MainForm : Form
 {
+    private PictureBox pictureBox = new();
+    private Rectangle dragBoxFromMouseDown;
+    private Image currentSelectedImage;
+    private Image tree;
+    private Image chair;
+    private Point screenOffset;
 
+    public static Image resizeImage(Image imgToResize, Size size)
+    {
+        return new Bitmap(imgToResize, size);
+    }
+
+    private void SetImages()
+    {
+        tree = new Bitmap($@"{Directory.GetCurrentDirectory()}\tree.png");
+        tree = resizeImage(tree, new Size(100, 100));
+        chair = new Bitmap($@"{Directory.GetCurrentDirectory()}\chair.png");
+        chair = resizeImage(chair, new Size(100, 100));
+    }
     
     public MainForm()
     {
-        
         BackColor=Color.Coral;
         var wwidth = Size.Width;
         InitializeComponent();
         WindowState = FormWindowState.Maximized;
         var layout = GetFlowLayoutPanel();
-        var pictureBox = new PictureBox();
         pictureBox.Location = new Point(800, 200);
+        pictureBox.AllowDrop = true;
         pictureBox.Size = new Size(800, 600);
         pictureBox.ImageLocation=Directory.GetCurrentDirectory()+@"\land.jpg";
+        SetImages();
+        pictureBox.DragOver += DragOver;
+        pictureBox.DragDrop += DragDrop;
+        pictureBox.DragEnter += DragEnter;
+
         var text = new Label();
         text.Location = new Point(0, 0);
         text.Text = "items";
@@ -25,8 +47,8 @@ public partial class MainForm : Form
         var flag = false;
         Controls.Add(text);
         Controls.Add(text1);
-        Controls.Add(GetStartButton("tree",new Point(0,20),Type.Item));
-        Controls.Add(GetStartButton("chair",new Point(0,120),Type.Item));
+        Controls.Add(GetStartButton("",new Point(0,20), Type.Item, "", tree));
+        Controls.Add(GetStartButton("",new Point(0,120),Type.Item, "", chair));
         Controls.Add(GetStartButton("table",new Point(0,220),Type.Item));
         Controls.Add(GetStartButton("toilet",new Point(0,320),Type.Item));
         Controls.Add(GetStartButton("Brush",new Point(wwidth,20),Type.Tool,"щетка"));
@@ -40,6 +62,70 @@ public partial class MainForm : Form
         Controls.Add(pictureBox);
     }
 
+    private void GetElement(object sender, MouseEventArgs e) // mouse down
+    {
+        if (sender is Button)
+        {
+            var clickedButton = sender as Button;
+            currentSelectedImage = clickedButton.Image;
+            var dragSize = SystemInformation.DragSize;
+            dragBoxFromMouseDown = new Rectangle(new Point(e.X - (dragSize.Width / 2),
+                e.Y - (dragSize.Height / 2)), dragSize);
+        }
+        else
+            dragBoxFromMouseDown = Rectangle.Empty;
+    }
+
+    private void ThrowElement(object sender, MouseEventArgs e) // mouse up
+    {
+        dragBoxFromMouseDown = Rectangle.Empty;
+    }
+
+    private void MoveMouse(object sender, MouseEventArgs e)
+    {
+        var clickedButton = sender as Button;
+        if ((e.Button & MouseButtons.Left) == MouseButtons.Left)
+        {
+            // Если курсор вышел за пределы кнопки - начинаем перетаскивание
+            if (dragBoxFromMouseDown != Rectangle.Empty &&
+                !dragBoxFromMouseDown.Contains(e.X, e.Y))
+            {
+                // screenOffset служить для определения границ экрана
+                screenOffset = SystemInformation.WorkingArea.Location;
+                DragDropEffects dropEffect = clickedButton.DoDragDrop(currentSelectedImage, DragDropEffects.All);
+            }
+        }
+    }
+
+    private void DragOver(object sender, DragEventArgs e)
+    {
+        if ((e.AllowedEffect & DragDropEffects.Move) == DragDropEffects.Move)
+        {
+            e.Effect = DragDropEffects.Move;
+        }
+        else
+        {
+            e.Effect = DragDropEffects.None;
+            Cursor = Cursors.Default;
+        }
+    }
+
+    private void DragDrop(object sender, DragEventArgs e)
+    {
+        if (e.Effect == DragDropEffects.Move)
+            pictureBox.Image = currentSelectedImage;
+    }
+    
+    private void DragLeave(object sender, DragEventArgs e)
+    {
+        
+    }
+    
+    private void DragEnter(object sender, DragEventArgs e)
+    {
+        e.Effect = DragDropEffects.None;
+    }
+    
     public enum Type
     {
         Tool,
@@ -58,7 +144,11 @@ public partial class MainForm : Form
         };
     }
 
-    private Button GetStartButton(string name,Point location,Type type,string ref_inf="элемент декора")
+    private Button GetStartButton(string name,
+        Point location,
+        Type type,
+        string ref_inf="элемент декора",
+        Image image = null)
     {
         
         var a= new Button
@@ -66,15 +156,18 @@ public partial class MainForm : Form
             Size = new Size(150, 100),
             Text = name,
             Location = location,
-            BackColor = Color.White
+            BackColor = Color.White,
+            Image = image
         };
-        
         switch (type)
         {
             case Type.Item:
                 a.Click += On_Click_Item; 
                 a.MouseEnter+=(s, e) => a.BackColor = Color.DarkRed;
                 a.MouseLeave += (s, e) => a.BackColor = Color.White;
+                a.MouseDown += GetElement;
+                a.MouseUp += ThrowElement;
+                a.MouseMove += MoveMouse;
                 break;
             case Type.Tool:
                 a.Click += On_Click_Tool;
@@ -125,7 +218,6 @@ public partial class MainForm : Form
         Tool_button_behavior();
         async void Tool_button_behavior() 
         {
-            
             var text = button.Text;
             button.Text = "You clicked on item,now place it on workspace";
             await Task.Delay(5000);
@@ -151,12 +243,10 @@ public partial class MainForm : Form
 }
 public static class Background
 {
-    public static Dictionary<int, string> dict = new Dictionary<int, string>()
+    public static Dictionary<int, string> dict = new()
     {
         {1,@"\land.jpg"},
         {2,@"\mars.jpg"},
         {3,@"\forest.jpg"}
     };
-    
-
 }

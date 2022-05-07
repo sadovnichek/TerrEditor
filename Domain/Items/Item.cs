@@ -12,7 +12,7 @@ public class Item
     public string Name { get; }
     
 
-    public Item(Bitmap image, Point location, Size size, string name,Color color)
+    public Item(Bitmap image, Point location, Size size, string name, Color color)
     {
         this.Image = image;
         this.Location = location;
