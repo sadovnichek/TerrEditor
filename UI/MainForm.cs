@@ -9,7 +9,7 @@ public partial class MainForm : Form
     private Image tree;
     private Image chair;
     private Point screenOffset;
-    private PictureBox pictureBox = new();
+    //private PictureBox pictureBox = new();
 
     public static Image resizeImage(Image imgToResize, Size size)
     {
@@ -21,7 +21,7 @@ public partial class MainForm : Form
         tree = new Bitmap($@"{Directory.GetCurrentDirectory()}\tree.png");
         tree = resizeImage(tree, new Size(100, 100));
         chair = new Bitmap($@"{Directory.GetCurrentDirectory()}\chair.png");
-        chair = resizeImage(chair, new Size(600, 300));
+        chair = resizeImage(chair, new Size(100, 100));
         setSize();
     }
     
@@ -33,21 +33,21 @@ public partial class MainForm : Form
         WindowState = FormWindowState.Maximized;
         panel.Location = new Point(800, 200);
         panel.AllowDrop = true;
-        panel.Size = new Size(100, 100);
+        panel.Size = new Size(800, 600);
         
         panel.BackgroundImage = Image.FromFile(Directory.GetCurrentDirectory()+@"\land.jpg");
         panel.DragOver += DragOver;
         panel.DragDrop += DragDrop;
         panel.DragEnter += DragEnter;
 
-        pictureBox.Location = new Point(10, 600);
+        /*pictureBox.Location = new Point(0, 0);
         pictureBox.AllowDrop = true;
-        pictureBox.Size = new Size(800, 600);
-        pictureBox.ImageLocation=Directory.GetCurrentDirectory()+@"\land.jpg";
+        pictureBox.Size = new Size(100, 100);
+        pictureBox.ImageLocation=Directory.GetCurrentDirectory()+@"\land.jpg"; */
         SetImages();
-        pictureBox.DragOver += DragOver;
+        /*pictureBox.DragOver += DragOver;
         pictureBox.DragDrop += DragDrop;
-        pictureBox.DragEnter += DragEnter;
+        pictureBox.DragEnter += DragEnter;*/
         
         var text = new Label();
         text.Location = new Point(0, 0);
@@ -70,7 +70,7 @@ public partial class MainForm : Form
         Controls.Add(GetStartButton("Выход", new Point(1000, 0), Type.Control, "Нажмите, чтобы покинуть программу"));
         Controls.Add(GetStartButton("Фон", new Point(1000, 100), Type.Control, "Нажмите, чтобы сменить фоновое изображение"));
         Controls.Add(panel);
-        Controls.Add(pictureBox);
+        //Controls.Add(pictureBox);
     }
 
     private void GetElement(object sender, MouseEventArgs e) // mouse down
@@ -266,7 +266,7 @@ public partial class MainForm : Form
     public class DrawingPoints
     {
         private int index = 0;
-        readonly Point[] points;
+        private Point[] points;
         public DrawingPoints(int size)
         {
             if (size <= 0)
@@ -291,10 +291,15 @@ public partial class MainForm : Form
         {
             return points;
         }
+
+        public bool checkDraw()
+        {
+            return index > 0;
+        }
     }
 
     private bool isDrawing = false;
-    private DrawingPoints drawingPoints = new DrawingPoints(2);
+    private DrawingPoints drawingPoints = new DrawingPoints(3);
     private Pen pen = new Pen(Color.Black, 3f);
     private Bitmap drawingImage = new Bitmap(100, 100);
     private Graphics graphics;
@@ -322,10 +327,10 @@ public partial class MainForm : Form
             return;
 
         drawingPoints.DrawPoint(e.X, e.Y);
-        if (drawingPoints.GetPoints().Length >= 2)
+        if (drawingPoints.checkDraw())
         {
             graphics.DrawLines(pen, drawingPoints.GetPoints());
-            pictureBox.Image = drawingImage;
+            pictureBox1.Image = drawingImage;
             drawingPoints.DrawPoint(e.X, e.Y);
         }
     }
