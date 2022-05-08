@@ -1,4 +1,6 @@
-﻿namespace UI;
+﻿using System;
+
+namespace UI;
 
 partial class MainForm
 {
@@ -43,10 +45,28 @@ partial class MainForm
             this.ColorYellow = new System.Windows.Forms.Button();
             this.ColorRed = new System.Windows.Forms.Button();
             this.ColorBlack = new System.Windows.Forms.Button();
+            this.PenWidth = new System.Windows.Forms.TrackBar();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.panel1.SuspendLayout();
             this.panel2.SuspendLayout();
             this.SuspendLayout();
+            //
+            // PenWidth
+            //
+            this.PenWidth.Dock = System.Windows.Forms.DockStyle.Bottom;
+            
+            this.PenWidth.BackColor = Color.Aqua;
+            this.PenWidth.Location = new System.Drawing.Point(0, 161);
+            this.PenWidth.Name = "PenWidth";
+            this.PenWidth.Size = new System.Drawing.Size(75, 20);
+            this.PenWidth.TabIndex = 3;
+            this.PenWidth.Orientation = Orientation.Horizontal;
+            this.PenWidth.ValueChanged += new EventHandler(this.PenWidth_ValueChabged);
+            PenWidth.Maximum = 30;
+            PenWidth.TickFrequency = 5;
+            PenWidth.LargeChange = 3;
+            PenWidth.SmallChange = 2;
+            this.PenWidth.Visible = true;
             // 
             // pictureBox1
             // 
@@ -77,6 +97,7 @@ partial class MainForm
             this.Clear.TabIndex = 2;
             this.Clear.Text = "Clear";
             this.Clear.UseVisualStyleBackColor = true;
+            this.Clear.Click += new EventHandler(this.Clear_Click);
             // 
             // panel1
             // 
@@ -111,6 +132,7 @@ partial class MainForm
             this.ColorGreen.Size = new System.Drawing.Size(111, 23);
             this.ColorGreen.TabIndex = 3;
             this.ColorGreen.UseVisualStyleBackColor = false;
+            this.ColorGreen.Click += new EventHandler(this.ColorGreen_Click);
             // 
             // ColorYellow
             // 
@@ -123,6 +145,7 @@ partial class MainForm
             this.ColorYellow.Size = new System.Drawing.Size(111, 23);
             this.ColorYellow.TabIndex = 2;
             this.ColorYellow.UseVisualStyleBackColor = false;
+            this.ColorYellow.Click += new EventHandler(this.ColorYellow_Click);
             // 
             // ColorRed
             // 
@@ -134,6 +157,7 @@ partial class MainForm
             this.ColorRed.Size = new System.Drawing.Size(111, 23);
             this.ColorRed.TabIndex = 1;
             this.ColorRed.UseVisualStyleBackColor = false;
+            this.ColorRed.Click += new EventHandler(this.ColorRed_Click);
             // 
             // ColorBlack
             // 
@@ -145,6 +169,7 @@ partial class MainForm
             this.ColorBlack.Size = new System.Drawing.Size(111, 23);
             this.ColorBlack.TabIndex = 0;
             this.ColorBlack.UseVisualStyleBackColor = false;
+            this.ColorBlack.Click += new EventHandler(this.ColorBlack_Click);
             // 
             // MainForm
             // 
@@ -167,6 +192,7 @@ partial class MainForm
     private PictureBox pictureBox1;
     private Button Save;
     private Button Clear;
+    private TrackBar PenWidth;
     private Panel panel1;
     private Button ColorGreen;
     private Button ColorYellow;
