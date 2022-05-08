@@ -1,6 +1,7 @@
 ﻿using System.Drawing;
+using TerrEditor.Domain.Items;
 
-namespace TerrEditor.Domain;
+namespace TerrEditor.Domain.Tools;
 
 public class Turner:ITool
 {

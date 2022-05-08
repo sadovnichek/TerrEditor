@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace TerrEditor.Domain
+﻿namespace TerrEditor.Domain.Common
 {
     public interface ILandscapeObject : ISize, IPicture
     {

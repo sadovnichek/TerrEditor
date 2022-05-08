@@ -1,4 +1,6 @@
-﻿namespace TerrEditor.Domain;
+﻿using TerrEditor.Domain.Items;
+
+namespace TerrEditor.Domain.Tools;
 
 public interface ITool
 {

@@ -3,174 +3,185 @@ using TerrEditor.Application;
 namespace UI;
 public partial class MainForm : Form
 {
-    private Panel panel = new Panel();
-    private Rectangle dragBoxFromMouseDown;
-    private Bitmap currentSelectedImage;
-    private Image tree;
-    private Image chair;
-    private Point screenOffset;
-    //private PictureBox pictureBox = new();
+    private Panel _panel;
+    private Rectangle _dragBoxFromMouseDown;
+    private Bitmap _currentSelectedImage;
+    private Image _tree;
+    private Image _chair;
 
-    public static Image resizeImage(Image imgToResize, Size size)
+    private static Image ResizeImage(Image imgToResize, Size size)
     {
         return new Bitmap(imgToResize, size);
     }
 
     private void SetImages()
     {
-        tree = new Bitmap($@"{Directory.GetCurrentDirectory()}\tree.png");
-        tree = resizeImage(tree, new Size(100, 100));
-        chair = new Bitmap($@"{Directory.GetCurrentDirectory()}\chair.png");
-        chair = resizeImage(chair, new Size(100, 100));
+        _tree = new Bitmap("./tree.png");
+        _tree = ResizeImage(_tree, new Size(100, 100));
+        _chair = new Bitmap("./chair.png");
+        _chair = ResizeImage(_chair, new Size(100, 100));
         setSize();
+    }
+
+    private void ConfigurePanel()
+    {
+        _panel = new();
+        _panel.Location = new Point(800, 200);
+        _panel.AllowDrop = true;
+        _panel.Size = new Size(800, 600);
+        _panel.BackgroundImage = Image.FromFile(Directory.GetCurrentDirectory()+@"\land.jpg");
+        _panel.DragOver += Drag_Over!;
+        _panel.DragDrop += Drag_Drop!;
+        _panel.DragEnter += Drag_Enter!;
+        Controls.Add(_panel);
+    }
+
+    private void SetLabels(int width)
+    {
+        var itemsLabel = new Label();
+        itemsLabel.Location = new Point(0, 0);
+        itemsLabel.Text = "items";
+        
+        var toolsLabel = new Label();
+        toolsLabel.Location = new Point(width, 0);
+        toolsLabel.Text = "tools";
+        
+        Controls.Add(itemsLabel);
+        Controls.Add(toolsLabel);
     }
     
     public MainForm(WorkingPlace place)
     {
-        BackColor=Color.Coral;
-        var wwidth = Size.Width;
+        BackColor = Color.Coral;
+        var width = Size.Width;
         InitializeComponent();
         WindowState = FormWindowState.Maximized;
-        panel.Location = new Point(800, 200);
-        panel.AllowDrop = true;
-        panel.Size = new Size(800, 600);
-        
-        panel.BackgroundImage = Image.FromFile(Directory.GetCurrentDirectory()+@"\land.jpg");
-        panel.DragOver += DragOver;
-        panel.DragDrop += DragDrop;
-        panel.DragEnter += DragEnter;
-
-        /*pictureBox.Location = new Point(0, 0);
-        pictureBox.AllowDrop = true;
-        pictureBox.Size = new Size(100, 100);
-        pictureBox.ImageLocation=Directory.GetCurrentDirectory()+@"\land.jpg"; */
+        ConfigurePanel();
         SetImages();
-        /*pictureBox.DragOver += DragOver;
-        pictureBox.DragDrop += DragDrop;
-        pictureBox.DragEnter += DragEnter;*/
+        SetLabels(width);
         
-        var text = new Label();
-        text.Location = new Point(0, 0);
-        text.Text = "items";
-        var text1 = new Label();
-        text1.Location = new Point(wwidth, 0);
-        text1.Text = "tools";
-        var flag = false;
-        Controls.Add(text);
-        Controls.Add(text1);
-        Controls.Add(GetStartButton("",new Point(0,20), Type.Item, "", tree));
-        Controls.Add(GetStartButton("",new Point(0,120),Type.Item, "", chair));
-        Controls.Add(GetStartButton("table",new Point(0,220),Type.Item));
-        Controls.Add(GetStartButton("toilet",new Point(0,320),Type.Item));
-        Controls.Add(GetStartButton("Brush",new Point(wwidth,20),Type.Tool,"щетка"));
-        Controls.Add(GetStartButton("Eraser",new Point(wwidth,120),Type.Tool,"ластик"));
-        Controls.Add(GetStartButton("Highlight",new Point(wwidth,220),Type.Tool,"хайлайтер"));
-        Controls.Add(GetStartButton("Pipette",new Point(wwidth,320),Type.Tool,"пипетка"));
-        Controls.Add(GetStartButton("Zoom",new Point(wwidth,420),Type.Tool,"изменение размера элемента"));
-        Controls.Add(GetStartButton("Выход", new Point(1000, 0), Type.Control, "Нажмите, чтобы покинуть программу"));
-        Controls.Add(GetStartButton("Фон", new Point(1000, 100), Type.Control, "Нажмите, чтобы сменить фоновое изображение"));
-        Controls.Add(panel);
-        //Controls.Add(pictureBox);
+        
+        Controls.Add(GetStartButton("",new Point(0,20), ControlType.Item, "", _tree));
+        Controls.Add(GetStartButton("",new Point(0,120), ControlType.Item, "", _chair));
+        Controls.Add(GetStartButton("table",new Point(0,220), ControlType.Item));
+        Controls.Add(GetStartButton("toilet",new Point(0,320), ControlType.Item));
+        Controls.Add(GetStartButton("Brush",new Point(width,20), ControlType.Tool,"щетка"));
+        Controls.Add(GetStartButton("Eraser",new Point(width,120), ControlType.Tool,"ластик"));
+        Controls.Add(GetStartButton("Highlight",new Point(width,220), ControlType.Tool,"хайлайтер"));
+        Controls.Add(GetStartButton("Pipette",new Point(width,320), ControlType.Tool,"пипетка"));
+        Controls.Add(GetStartButton("Zoom",new Point(width,420), ControlType.Tool,"изменение размера элемента"));
+        Controls.Add(GetStartButton("Выход", new Point(1000, 0), ControlType.Control, "Нажмите, чтобы покинуть программу"));
+        Controls.Add(GetStartButton("Фон", new Point(1000, 100), ControlType.Control, "Нажмите, чтобы сменить фоновое изображение"));
     }
 
-    private void GetElement(object sender, MouseEventArgs e) // mouse down
+    public sealed override Color BackColor
     {
-        if (sender is Button)
+        get => base.BackColor;
+        set => base.BackColor = value;
+    }
+
+    private void Mouse_Down(object sender, MouseEventArgs e)
+    {
+        var dragSize = SystemInformation.DragSize;
+        _dragBoxFromMouseDown = new Rectangle(new Point(e.X - (dragSize.Width / 2),
+                         e.Y - (dragSize.Height / 2)), dragSize);
+        switch (sender)
         {
-            var clickedButton = sender as Button;
-            currentSelectedImage = new Bitmap(clickedButton.Image);
-            var dragSize = SystemInformation.DragSize;
-            dragBoxFromMouseDown = new Rectangle(new Point(e.X - (dragSize.Width / 2),
-                e.Y - (dragSize.Height / 2)), dragSize);
-        }
-        else
-            dragBoxFromMouseDown = Rectangle.Empty;
-    }
-
-    private void ThrowElement(object sender, MouseEventArgs e) // mouse up
-    {
-        dragBoxFromMouseDown = Rectangle.Empty;
-    }
-
-    private void MoveMouse(object sender, MouseEventArgs e)
-    {
-        var clickedButton = sender as Button;
-        if ((e.Button & MouseButtons.Left) == MouseButtons.Left)
-        {
-            // Если курсор вышел за пределы кнопки - начинаем перетаскивание
-            if (dragBoxFromMouseDown != Rectangle.Empty &&
-                !dragBoxFromMouseDown.Contains(e.X, e.Y))
+            case Button clickedButton:
             {
-                // screenOffset служить для определения границ экрана
-                screenOffset = SystemInformation.WorkingArea.Location;
-                var dropEffect = clickedButton.DoDragDrop(currentSelectedImage, DragDropEffects.All);
+                _currentSelectedImage = new Bitmap(clickedButton.Image);
+                break;
+            }
+            case PictureBox clickedPictureBox:
+            {
+                _currentSelectedImage = new Bitmap(clickedPictureBox.Image);
+                break;
+            }
+            default:
+                _dragBoxFromMouseDown = Rectangle.Empty;
+                break;
+        }
+    }
+
+    private void Mouse_Up(object sender, MouseEventArgs e)
+    {
+        _dragBoxFromMouseDown = Rectangle.Empty;
+    }
+
+    private void Move_Mouse(object sender, MouseEventArgs e)
+    {
+        switch (sender)
+        {
+            case Button clickedButton when e.Button == MouseButtons.Left:
+            {
+                if (_dragBoxFromMouseDown != Rectangle.Empty && !_dragBoxFromMouseDown.Contains(e.X, e.Y))
+                {
+                    clickedButton.DoDragDrop(_currentSelectedImage, DragDropEffects.All);
+                }
+                break;
+            }
+            case PictureBox pictureBox when e.Button == MouseButtons.Left:
+            {
+                if (_dragBoxFromMouseDown != Rectangle.Empty && !_dragBoxFromMouseDown.Contains(e.X, e.Y))
+                {
+                    pictureBox.DoDragDrop(_currentSelectedImage, DragDropEffects.All);
+                    _panel.Controls.Remove(pictureBox);
+                }
+                break;
             }
         }
     }
 
-    private void DragOver(object sender, DragEventArgs e)
+    private void Drag_Over(object sender, DragEventArgs e)
     {
-        if ((e.AllowedEffect & DragDropEffects.Move) == DragDropEffects.Move)
-        {
-            e.Effect = DragDropEffects.Move;
-        }
-        else
-        {
-            e.Effect = DragDropEffects.None;
-        }
+        e.Effect = (e.AllowedEffect & DragDropEffects.Move) == DragDropEffects.Move 
+            ? DragDropEffects.Move : DragDropEffects.None;
     }
 
-    private void DragDrop(object sender, DragEventArgs e)
+    private PictureBox CreatePictureBox()
+    {
+        var temp = new PictureBox();
+        temp.Width = 100;
+        temp.Height = 100;
+        temp.Image = _currentSelectedImage;
+        temp.Location = new Point(Cursor.Position.X - _panel.Location.X - temp.Image.Width / 2, 
+            Cursor.Position.Y - _panel.Location.Y - temp.Image.Height / 2);
+        temp.BackColor = Color.Transparent;
+        temp.Visible = true;
+        temp.Click += OnPictureBoxClick!;
+        temp.MouseDown += Mouse_Down!;
+        temp.MouseUp += Mouse_Up!;
+        temp.MouseMove += Move_Mouse!;
+        return temp;
+    }
+    
+    private void Drag_Drop(object sender, DragEventArgs e)
     {
         if (e.Effect == DragDropEffects.Move)
         {
-            PictureBox temp = new PictureBox();
-            panel.Controls.Add(temp);
-            temp.Parent = panel;
-            temp.Width = 100;
-            temp.Height = 100;
-            temp.Image = currentSelectedImage;
-            temp.Location = new Point(Cursor.Position.X - panel.Location.X - temp.Image.Width / 2, 
-                Cursor.Position.Y - panel.Location.Y - temp.Image.Height / 2);
-            temp.Visible = true;
+            _panel.Controls.Add(CreatePictureBox());
         }
     }
-    
-    private void DragLeave(object sender, DragEventArgs e)
+
+    private void OnPictureBoxClick(object sender, EventArgs e)
     {
-        
+        if (sender is PictureBox picureBox)
+        {
+            picureBox.BackColor = Color.Black;
+        }
     }
-    
-    private void DragEnter(object sender, DragEventArgs e)
+
+    private void Drag_Enter(object sender, DragEventArgs e)
     {
         e.Effect = DragDropEffects.None;
     }
     
-    public enum Type
-    {
-        Tool,
-        Item,
-        Control
-    }
-    
-
-    private FlowLayoutPanel GetFlowLayoutPanel()
-    {
-        return new FlowLayoutPanel
-        {
-            Dock = DockStyle.Top,
-            AutoSize = true,
-            FlowDirection = FlowDirection.LeftToRight
-        };
-    }
-
     private Button GetStartButton(string name,
         Point location,
-        Type type,
+        ControlType type,
         string ref_inf="элемент декора",
         Image image = null)
     {
-        
         var a= new Button
         {
             Size = new Size(150, 100),
@@ -181,20 +192,20 @@ public partial class MainForm : Form
         };
         switch (type)
         {
-            case Type.Item:
+            case ControlType.Item:
                 a.Click += On_Click_Item; 
                 a.MouseEnter+=(s, e) => a.BackColor = Color.DarkRed;
                 a.MouseLeave += (s, e) => a.BackColor = Color.White;
-                a.MouseDown += GetElement;
-                a.MouseUp += ThrowElement;
-                a.MouseMove += MoveMouse;
+                a.MouseDown += Mouse_Down;
+                a.MouseUp += Mouse_Up;
+                a.MouseMove += Move_Mouse;
                 break;
-            case Type.Tool:
+            case ControlType.Tool:
                 a.Click += On_Click_Tool;
                 a.MouseEnter+=(s, e) => a.BackColor = Color.CornflowerBlue;
                 a.MouseLeave += (s, e) =>a.BackColor = Color.White;
                 break;
-            case Type.Control:
+            case ControlType.Control:
                 a.Click += On_Click_Control;
                 a.MouseEnter+=(s, e) => a.BackColor = Color.CornflowerBlue;
                 a.MouseLeave += (s, e) =>a.BackColor = Color.White;
@@ -205,7 +216,7 @@ public partial class MainForm : Form
         return a;
 
     }
-
+    private static int call = 0;
     private void On_Click_Control(object sender, EventArgs e)
     {
         if (String.Compare(((Button)sender).Text, "Выход", StringComparison.Ordinal) == 0)
@@ -213,23 +224,10 @@ public partial class MainForm : Form
             Application.Exit();
         }
         else if (String.Compare(((Button)sender).Text, "Фон", StringComparison.Ordinal) == 0)
-        { 
-            foreach (Control x in Controls)
-            {
-                if (x is Panel)
-                {
-                    var rnd = new Random();
-                    var hash = ((Panel)x).BackgroundImage.Size.GetHashCode();
-                    var i = rnd.Next(1, 6);
-                    var dir = Directory.GetParent(Environment.CurrentDirectory)?.Parent;
-                    while (hash == Image.FromFile(dir?.Parent?.FullName+Background.dict[i]).Size.GetHashCode())
-                    {
-                       i=rnd.Next(1, 6);
-                    }
-
-                    ((Panel)x).BackgroundImage = Image.FromFile(dir?.Parent?.FullName+Background.dict[i]);
-                }
-            }
+        {
+            var backgrounds = Background.GetBackgroundImages().ToArray();
+            _panel.BackgroundImage = backgrounds.ToArray()[call % backgrounds.Length];
+            call++;
         }
     }
 
@@ -302,7 +300,7 @@ public partial class MainForm : Form
     private DrawingPoints drawingPoints = new DrawingPoints(3);
     private Pen pen = new Pen(Color.Black, 3f);
     private Bitmap drawingImage = new Bitmap(100, 100);
-    private Graphics graphics;
+    private Graphics graphics = null!;
 
     private void setSize()
     {
@@ -310,6 +308,7 @@ public partial class MainForm : Form
         drawingImage = new Bitmap(rectangle.Width, rectangle.Height);
         graphics = Graphics.FromImage(drawingImage);
     }
+    
     private void pictureBox1_MouseDown(object sender, MouseEventArgs e)
     {
         isDrawing = true;
@@ -342,12 +341,12 @@ public partial class MainForm : Form
 }
 public static class Background
 {
-    public static Dictionary<int, string> dict = new()
+    public static IEnumerable<Image> GetBackgroundImages()
     {
-        {1,@"\land.jpg"},
-        {2,@"\dessert.jpg"},
-        {3,@"\forest.jpg"},
-        {4,@"\wooden.jpeg"},
-        {5,@"\stones.jpeg"}
-    };
+        yield return Image.FromFile("./land.jpg");
+        yield return Image.FromFile("./wooden.jpeg");
+        yield return Image.FromFile("./dessert.jpg");
+        yield return Image.FromFile("./forest.jpg");
+        yield return Image.FromFile("./stones.jpeg");
+    }
 }

@@ -1,4 +1,6 @@
-﻿namespace TerrEditor.Domain;
+﻿using TerrEditor.Domain.Items;
+
+namespace TerrEditor.Domain;
 
 public class Category
 {

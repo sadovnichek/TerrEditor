@@ -1,6 +1,6 @@
 ﻿using System.Drawing;
 
-namespace TerrEditor.Domain;
+namespace TerrEditor.Domain.Items;
 
 public class Item
 {

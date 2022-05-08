@@ -1,4 +1,6 @@
 ﻿using System.Drawing;
+using TerrEditor.Domain.Items;
+using TerrEditor.Domain.Tools;
 
 namespace TerrEditor.Domain;
 

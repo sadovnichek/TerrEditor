@@ -1,4 +1,4 @@
-﻿namespace TerrEditor.Domain;
+﻿namespace TerrEditor.Domain.Common;
 
 public interface IRepo<T>
 {

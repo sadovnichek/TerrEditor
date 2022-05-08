@@ -1,4 +1,6 @@
-﻿namespace TerrEditor.Domain;
+﻿using TerrEditor.Domain.Common;
+
+namespace TerrEditor.Domain.Tools;
 
 public class ToolRepo : IRepo<ITool>
 {
