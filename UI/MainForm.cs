@@ -290,14 +290,14 @@ public partial class MainForm : Form
             return points;
         }
 
-        public bool checkDraw()
+        public int GetCountPoints()
         {
-            return index > 0;
+            return index;
         }
     }
 
     private bool isDrawing = false;
-    private DrawingPoints drawingPoints = new DrawingPoints(3);
+    private DrawingPoints drawingPoints = new DrawingPoints(2);
     private Pen pen = new Pen(Color.Black, 3f);
     private Bitmap drawingImage = new Bitmap(100, 100);
     private Graphics graphics = null!;
@@ -326,7 +326,7 @@ public partial class MainForm : Form
             return;
 
         drawingPoints.DrawPoint(e.X, e.Y);
-        if (drawingPoints.checkDraw())
+        if (drawingPoints.GetCountPoints() >= 2)
         {
             graphics.DrawLines(pen, drawingPoints.GetPoints());
             pictureBox1.Image = drawingImage;
