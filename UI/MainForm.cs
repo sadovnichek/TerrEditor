@@ -2,7 +2,7 @@ namespace UI;
 
 public partial class MainForm : Form
 {
-    FlowLayoutPanel panel = new FlowLayoutPanel();
+    private Panel panel = new Panel();
     private Rectangle dragBoxFromMouseDown;
     private Image currentSelectedImage;
     private Image tree;
@@ -31,8 +31,8 @@ public partial class MainForm : Form
         panel.Location = new Point(800, 200);
         panel.AllowDrop = true;
         panel.Size = new Size(800, 600);
-        //pictureBox.ImageLocation=Directory.GetCurrentDirectory()+@"\land.jpg";
         SetImages();
+        panel.BackgroundImage = Image.FromFile(Directory.GetCurrentDirectory()+@"\land.jpg");
         panel.DragOver += DragOver;
         panel.DragDrop += DragDrop;
         panel.DragEnter += DragEnter;
@@ -111,12 +111,15 @@ public partial class MainForm : Form
     {
         if (e.Effect == DragDropEffects.Move)
         {
-            var newAddedPictureBox = new PictureBox()
-            {
-                Image = currentSelectedImage,
-                Size = new Size(100, 100)
-            };
-            panel.Controls.Add(newAddedPictureBox);
+            PictureBox temp = new PictureBox();
+            panel.Controls.Add(temp);
+            temp.Width = 100;
+            temp.Height = 100;
+            temp.BorderStyle = BorderStyle.FixedSingle;
+            temp.Image = currentSelectedImage;
+            temp.Location = new Point(Cursor.Position.X - panel.Location.X - temp.Image.Width / 2, 
+                Cursor.Position.Y - panel.Location.Y - temp.Image.Height / 2);
+            temp.Visible = true;
         }
     }
     
