@@ -1,5 +1,6 @@
-namespace UI;
+using TerrEditor.Application;
 
+namespace UI;
 public partial class MainForm : Form
 {
     private Panel panel = new Panel();
@@ -22,7 +23,7 @@ public partial class MainForm : Form
         chair = resizeImage(chair, new Size(100, 100));
     }
     
-    public MainForm()
+    public MainForm(WorkingPlace place)
     {
         BackColor=Color.Coral;
         var wwidth = Size.Width;

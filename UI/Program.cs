@@ -1,3 +1,4 @@
+using TerrEditor.Application;
 using TerrEditor.Domain;
 
 namespace UI;
@@ -14,10 +15,9 @@ static class Program
         // see https://aka.ms/applicationconfiguration.
         
         ApplicationConfiguration.Initialize();
-        var form = new MainForm();
+        var workingPlace = new WorkingPlace();
+        var form = new MainForm(workingPlace);
         form.Text = "Territory Editor";
-        var canvas = new Canvas(form.Size);
-        
         Application.Run(form);
     }
 }
