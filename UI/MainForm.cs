@@ -203,16 +203,17 @@ public partial class MainForm : Form
         { 
             foreach (Control x in Controls)
             {
-                if (x is PictureBox)
+                if (x is Panel)
                 {
                     var rnd = new Random();
-                    var hash = ((PictureBox)x).ImageLocation.GetHashCode();
+                    var hash = ((Panel)x).BackgroundImage.GetHashCode();
                     var i = rnd.Next(1, 4);
-                    while (hash == (Directory.GetCurrentDirectory()+Background.dict[i]).GetHashCode())
+                    while (hash == Image.FromFile(Directory.GetCurrentDirectory()+Background.dict[i]).GetHashCode())
                     {
                        i=rnd.Next(1, 4);
                     }
-                    ((PictureBox)x).ImageLocation = Directory.GetCurrentDirectory()+Background.dict[i];
+
+                    ((Panel)x).BackgroundImage = Image.FromFile(Directory.GetCurrentDirectory() + Background.dict[i]);
                 }
             }
         }
@@ -253,7 +254,7 @@ public static class Background
     public static Dictionary<int, string> dict = new()
     {
         {1,@"\land.jpg"},
-        {2,@"\mars.jpg"},
+        {2,@"\marsHigh.jpg"},
         {3,@"\forest.jpg"}
     };
 }
