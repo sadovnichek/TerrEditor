@@ -4,7 +4,7 @@ public partial class MainForm : Form
 {
     private Panel panel = new Panel();
     private Rectangle dragBoxFromMouseDown;
-    private Image currentSelectedImage;
+    private Bitmap currentSelectedImage;
     private Image tree;
     private Image chair;
     private Point screenOffset;
@@ -65,7 +65,7 @@ public partial class MainForm : Form
         if (sender is Button)
         {
             var clickedButton = sender as Button;
-            currentSelectedImage = clickedButton.Image;
+            currentSelectedImage = new Bitmap(clickedButton.Image);
             var dragSize = SystemInformation.DragSize;
             dragBoxFromMouseDown = new Rectangle(new Point(e.X - (dragSize.Width / 2),
                 e.Y - (dragSize.Height / 2)), dragSize);
@@ -113,9 +113,9 @@ public partial class MainForm : Form
         {
             PictureBox temp = new PictureBox();
             panel.Controls.Add(temp);
+            temp.Parent = panel;
             temp.Width = 100;
             temp.Height = 100;
-            temp.BorderStyle = BorderStyle.FixedSingle;
             temp.Image = currentSelectedImage;
             temp.Location = new Point(Cursor.Position.X - panel.Location.X - temp.Image.Width / 2, 
                 Cursor.Position.Y - panel.Location.Y - temp.Image.Height / 2);
