@@ -206,14 +206,15 @@ public partial class MainForm : Form
                 if (x is Panel)
                 {
                     var rnd = new Random();
-                    var hash = ((Panel)x).BackgroundImage.GetHashCode();
-                    var i = rnd.Next(1, 4);
-                    while (hash == Image.FromFile(Directory.GetCurrentDirectory()+Background.dict[i]).GetHashCode())
+                    var hash = ((Panel)x).BackgroundImage.Size.GetHashCode();
+                    var i = rnd.Next(1, 6);
+                    var dir = Directory.GetParent(Environment.CurrentDirectory)?.Parent;
+                    while (hash == Image.FromFile(dir?.Parent?.FullName+Background.dict[i]).Size.GetHashCode())
                     {
-                       i=rnd.Next(1, 4);
+                       i=rnd.Next(1, 6);
                     }
 
-                    ((Panel)x).BackgroundImage = Image.FromFile(Directory.GetCurrentDirectory() + Background.dict[i]);
+                    ((Panel)x).BackgroundImage = Image.FromFile(dir?.Parent?.FullName+Background.dict[i]);
                 }
             }
         }
@@ -254,7 +255,9 @@ public static class Background
     public static Dictionary<int, string> dict = new()
     {
         {1,@"\land.jpg"},
-        {2,@"\marsHigh.jpg"},
-        {3,@"\forest.jpg"}
+        {2,@"\dessert.jpg"},
+        {3,@"\forest.jpg"},
+        {4,@"\wooden.jpeg"},
+        {5,@"\stones.jpeg"}
     };
 }
