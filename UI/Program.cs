@@ -1,6 +1,5 @@
 using TerrEditor.Application;
 using TerrEditor.Domain;
-using TerrEditor.Domain.Tools;
 
 namespace UI;
 
@@ -19,7 +18,7 @@ static class Program
         var workSpace = new WorkSpace();
         var workingPlace = new WorkService(workSpace);
         var form = new MainForm(workingPlace);
-        form.Text = "Territory Editor";
+        form.Text = @"Landscape Editor";
         Application.Run(form);
     }
 }

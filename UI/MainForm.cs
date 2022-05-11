@@ -1,6 +1,7 @@
 using TerrEditor.Application;
-using TerrEditor.Domain;
 using TerrEditor.Domain.Items;
+using UI.Buttons;
+#pragma warning disable CS8618
 
 namespace UI;
 public partial class MainForm : Form
@@ -10,15 +11,15 @@ public partial class MainForm : Form
     private Bitmap _currentSelectedImage;
     private Image _tree;
     private Image _chair;
-    private Items items;
+    private Items _items;
     private WorkService _service;
 
-    private  Image ResizeImage(Image imgToResize, Size size)
+    public static Image ResizeImage(Image imgToResize, Size size)
     {
         return new Bitmap(imgToResize, size);
     }
 
-    private void SetImages()
+    private void SetImages() // загрузка из БД
     {
         _tree = new Bitmap("./tree.png");
         _tree = ResizeImage(_tree, new Size(100, 100));
@@ -29,7 +30,7 @@ public partial class MainForm : Form
 
     private void ConfigurePanel()
     {
-        _panel = new();
+        _panel = new Panel();
         _panel.Location = new Point(800, 200);
         _panel.AllowDrop = true;
         _panel.Size = new Size(800, 600);
@@ -40,15 +41,15 @@ public partial class MainForm : Form
         Controls.Add(_panel);
     }
 
-    private void SetLabels(int width)
+    private void SetLabels()
     {
         var itemsLabel = new Label();
         itemsLabel.Location = new Point(0, 0);
-        itemsLabel.Text = "items";
+        itemsLabel.Text = @"items";
         
         var toolsLabel = new Label();
-        toolsLabel.Location = new Point(width, 0);
-        toolsLabel.Text = "tools";
+        toolsLabel.Location = new Point(150, 0);
+        toolsLabel.Text = @"tools";
         
         Controls.Add(itemsLabel);
         Controls.Add(toolsLabel);
@@ -56,30 +57,43 @@ public partial class MainForm : Form
 
     private void ConfigureItemButtons()
     {
-        Controls.Add(GetStartButton(new Point(0,20), ControlType.Item, "дерево", _tree));
-        Controls.Add(GetStartButton(new Point(0,120), ControlType.Item, "стул", _chair));
-        Controls.Add(GetStartButton(new Point(0,220), ControlType.Item, "стол"));
-        Controls.Add(GetStartButton(new Point(0,320), ControlType.Item, "забор"));
+        Controls.Add(new ItemButton(new Rectangle(0, 20, 100, 100), _tree, Mouse_Down!, Mouse_Up!, Move_Mouse!));
+        Controls.Add(new ItemButton(new Rectangle(0, 120, 100, 100), _chair, Mouse_Down!, Mouse_Up!, Move_Mouse!));
+    }
+
+    private void ConfigureToolButtons()
+    {
+        Controls.Add(new ToolButton(new Rectangle(150, 20, 100, 100), Resources.eraser));
+    }
+
+    private void ConfigureChangeBackgroundButton()
+    {
+        var changeBackgroundButton = new Button
+        {
+            Location = new Point(1000, 100),
+            Text = @"Change background",
+            Size = new Size(200, 100),
+            BackColor = Color.White
+        };
+        changeBackgroundButton.MouseEnter += (_, _) => changeBackgroundButton.BackColor = Color.CornflowerBlue;
+        changeBackgroundButton.MouseLeave += (_, _) => changeBackgroundButton.BackColor = Color.White;
+        changeBackgroundButton.Click += ChangeBackground!;
+        Controls.Add(changeBackgroundButton);
     }
     
     public MainForm(WorkService service)
     {
-        items = new Items(); 
-        _service = service;
-        BackColor = Color.Coral;
-        var width = Size.Width;
-        InitializeComponent();
         WindowState = FormWindowState.Maximized;
+        _items = new Items(); 
+        _service = service;
+        BackColor = Color.Azure;
+        InitializeComponent();
         ConfigurePanel();
         SetImages();
-        SetLabels(width);
+        SetLabels();
         ConfigureItemButtons();
-        Controls.Add(GetStartButton(new Point(width,20), ControlType.Tool,"щетка"));
-        Controls.Add(GetStartButton(new Point(width,120), ControlType.Tool,"ластик"));
-        Controls.Add(GetStartButton(new Point(width,220), ControlType.Tool,"выделитель"));
-        Controls.Add(GetStartButton(new Point(width,320), ControlType.Tool,"пипетка"));
-        Controls.Add(GetStartButton(new Point(1000, 100), ControlType.Control, "сменить фоновое изображение", 
-            tag:"background"));
+        ConfigureToolButtons();
+        ConfigureChangeBackgroundButton();
     }
 
     public sealed override Color BackColor
@@ -174,13 +188,13 @@ public partial class MainForm : Form
     private void OnPictureBoxClick(object sender, MouseEventArgs e)
     {
         if (sender is PictureBox pictureBox)
-                {
-                    var test=_service.DoZoom(new Item(new Point(1,1),pictureBox.Size,"test"));
-                    pictureBox.Size = test.Size;
-                    pictureBox.Image = ResizeImage(pictureBox.Image,
-                        pictureBox.Size);
-                    pictureBox.BorderStyle = BorderStyle.Fixed3D;
-                }
+        {
+            var test=_service.DoZoom(new Item(new Point(1,1),pictureBox.Size,"test"));
+            pictureBox.Size = test.Size;
+            pictureBox.Image = ResizeImage(pictureBox.Image,
+                pictureBox.Size);
+            pictureBox.BorderStyle = BorderStyle.Fixed3D;
+        }
     }
     private  Image TurnImage(Image imgToResize)
     {
@@ -194,66 +208,12 @@ public partial class MainForm : Form
         e.Effect = DragDropEffects.None;
     }
     
-    private Button GetStartButton(Point location,
-        ControlType type,
-        string description,
-        Image image = null,
-        string name = "",
-        string tag = "",
-        ToolType secondType=default)
-    {
-        var a= new Button
-        {
-            Size = new Size(150, 100),
-            Text = name,
-            Location = location,
-            BackColor = Color.White,
-            Image = image,
-            Tag = tag
-        };
-        items.Add(name,location,new Size(150,150));
-        switch (type)
-        {
-            case ControlType.Item:
-                switch (secondType)
-                {
-                    case ToolType.Turner:
-                        _service.SetToTurn();
-                        break;
-                }
-                a.MouseEnter+=(s, e) => a.BackColor = Color.DarkRed;
-                a.MouseLeave += (s, e) => a.BackColor = Color.White;
-                a.MouseDown += Mouse_Down!;
-                a.MouseUp += Mouse_Up!;
-                a.MouseMove += Move_Mouse!;
-                break;
-            case ControlType.Tool:
-                a.MouseEnter+=(s, e) => a.BackColor = Color.CornflowerBlue;
-                a.MouseLeave += (s, e) =>a.BackColor = Color.White;
-                break;
-            case ControlType.Control:
-                a.Click += On_Click_Control!;
-                a.MouseEnter+=(s, e) => a.BackColor = Color.CornflowerBlue;
-                a.MouseLeave += (s, e) =>a.BackColor = Color.White;
-                break;
-        }
-        var toolT = new ToolTip();
-        toolT.SetToolTip(a,description);
-        return a;
-
-    }
     private static int call = 0;
-    private void On_Click_Control(object sender, EventArgs e)
+    private void ChangeBackground(object sender, EventArgs e)
     {
-        if (sender is Button button)
-        {
-            if (button.Tag == "background")
-            {
-                var backgrounds = Background.GetBackgroundImages().ToArray();
-                _panel.BackgroundImage = backgrounds.ToArray()[call % backgrounds.Length];
-                call++;
-            }
-        }
+        var backgrounds = Background.GetBackgroundImages().ToArray();
+        _panel.BackgroundImage = backgrounds.ToArray()[call % backgrounds.Length];
+        call++;
     }
 
     public class DrawingPoints
