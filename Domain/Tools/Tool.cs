@@ -6,5 +6,5 @@ public interface ITool
 {
     public string Name { get; }
 
-    void DoAction(Item item);
+    Item DoAction(Item item);
 }

@@ -1,4 +1,6 @@
 using TerrEditor.Application;
+using TerrEditor.Domain;
+using TerrEditor.Domain.Items;
 
 namespace UI;
 public partial class MainForm : Form
@@ -8,8 +10,10 @@ public partial class MainForm : Form
     private Bitmap _currentSelectedImage;
     private Image _tree;
     private Image _chair;
+    private Items items;
+    private WorkService _service;
 
-    private static Image ResizeImage(Image imgToResize, Size size)
+    private  Image ResizeImage(Image imgToResize, Size size)
     {
         return new Bitmap(imgToResize, size);
     }
@@ -58,8 +62,10 @@ public partial class MainForm : Form
         Controls.Add(GetStartButton(new Point(0,320), ControlType.Item, "забор"));
     }
     
-    public MainForm(WorkingPlace place)
+    public MainForm(WorkService service)
     {
+        items = new Items(); 
+        _service = service;
         BackColor = Color.Coral;
         var width = Size.Width;
         InitializeComponent();
@@ -150,7 +156,7 @@ public partial class MainForm : Form
             Cursor.Position.Y - _panel.Location.Y - temp.Image.Height / 2);
         temp.BackColor = Color.Transparent;
         temp.Visible = true;
-        temp.Click += OnPictureBoxClick!;
+        temp.MouseClick += OnPictureBoxClick!;
         temp.MouseDown += Mouse_Down!;
         temp.MouseUp += Mouse_Up!;
         temp.MouseMove += Move_Mouse!;
@@ -165,17 +171,24 @@ public partial class MainForm : Form
         }
     }
 
-    private void OnPictureBoxClick(object sender, EventArgs e)
+    private void OnPictureBoxClick(object sender, MouseEventArgs e)
     {
         if (sender is PictureBox pictureBox)
-        {
-            pictureBox.Size = new Size(pictureBox.Size.Width + 100, pictureBox.Size.Height + 100);
-            pictureBox.Image = ResizeImage(pictureBox.Image,
-                new Size(pictureBox.Image.Size.Width + 100, pictureBox.Image.Size.Height + 100));
-            pictureBox.BorderStyle = BorderStyle.Fixed3D;
-        }
+                {
+                    var test=_service.DoZoom(new Item(new Point(1,1),pictureBox.Size,"test"));
+                    pictureBox.Size = test.Size;
+                    pictureBox.Image = ResizeImage(pictureBox.Image,
+                        pictureBox.Size);
+                    pictureBox.BorderStyle = BorderStyle.Fixed3D;
+                }
     }
-
+    private  Image TurnImage(Image imgToResize)
+    {
+        var a = new Bitmap(imgToResize);
+        a.RotateFlip(RotateFlipType.Rotate90FlipX);
+        return new Bitmap(imgToResize);
+    }
+    
     private void Drag_Enter(object sender, DragEventArgs e)
     {
         e.Effect = DragDropEffects.None;
@@ -186,7 +199,8 @@ public partial class MainForm : Form
         string description,
         Image image = null,
         string name = "",
-        string tag = "")
+        string tag = "",
+        ToolType secondType=default)
     {
         var a= new Button
         {
@@ -197,9 +211,16 @@ public partial class MainForm : Form
             Image = image,
             Tag = tag
         };
+        items.Add(name,location,new Size(150,150));
         switch (type)
         {
             case ControlType.Item:
+                switch (secondType)
+                {
+                    case ToolType.Turner:
+                        _service.SetToTurn();
+                        break;
+                }
                 a.MouseEnter+=(s, e) => a.BackColor = Color.DarkRed;
                 a.MouseLeave += (s, e) => a.BackColor = Color.White;
                 a.MouseDown += Mouse_Down!;
@@ -313,6 +334,16 @@ public partial class MainForm : Form
 
     }
 }
+
+ enum ToolType
+{
+    Brush,
+    Eraser,
+    Highlighter,
+    Pipette,
+    Turner
+}
+
 public static class Background
 {
     public static IEnumerable<Image> GetBackgroundImages()

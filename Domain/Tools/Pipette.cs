@@ -13,9 +13,10 @@ public class Pipette : ITool
     {
         this.work = work;
     }
-    public void DoAction(Item item)
+    public Item DoAction(Item item)
     {
         work.CurrentObject = item;
         work.color=item.Color;
+        return work.CurrentObject;
     }
 }

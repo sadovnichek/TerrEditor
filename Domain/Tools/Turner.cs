@@ -12,9 +12,10 @@ public class Turner:ITool
     {
         work = space;
     }
-    public void DoAction(Item item)
+    public Item DoAction(Item item)
     {
         work.CurrentObject = item;
         work.CurrentObject.Location = new Point(item.Location.Y, -item.Location.X);
+        return work.CurrentObject;
     }
 }

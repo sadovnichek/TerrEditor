@@ -11,7 +11,7 @@ public class Highlight:ITool
     {
         work = space;
     }
-    public void DoAction(Item item)
+    public Item DoAction(Item item)
     {
         /*byte r = item.Color.R; 
 
@@ -27,6 +27,7 @@ public class Highlight:ITool
         }
         item.Image = bmp;*/
         work.CurrentObject = Item.Clone(item);
+        return work.CurrentObject;
     }
 
     

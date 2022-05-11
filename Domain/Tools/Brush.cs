@@ -6,8 +6,8 @@ public class Brush : ITool
 {
     public string Name => "Brush";
 
-    public void DoAction(Item item)
+    public Item DoAction(Item item)
     {
-        
+        return item;
     }
 }

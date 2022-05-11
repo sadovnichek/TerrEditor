@@ -19,9 +19,6 @@ public  class WorkSpace
     }
     
     //методы
-    public void DoAction(Item? item)
-    {
-        CurrentTool.DoAction(item);
-    }
+    
 
 }

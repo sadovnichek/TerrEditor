@@ -1,4 +1,6 @@
 using TerrEditor.Application;
+using TerrEditor.Domain;
+using TerrEditor.Domain.Tools;
 
 namespace UI;
 
@@ -14,7 +16,8 @@ static class Program
         // see https://aka.ms/applicationconfiguration.
         
         ApplicationConfiguration.Initialize();
-        var workingPlace = new WorkingPlace();
+        var workSpace = new WorkSpace();
+        var workingPlace = new WorkService(workSpace);
         var form = new MainForm(workingPlace);
         form.Text = "Territory Editor";
         Application.Run(form);

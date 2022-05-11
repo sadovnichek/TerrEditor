@@ -12,9 +12,10 @@ public class Eraser : ITool
         workspace = space;
     }
 
-    public void DoAction(Item item)
+    public Item DoAction(Item item)
     {
         workspace.CurrentObject = item;
         workspace.CurrentCanvas.DeleteItem(item,item.Location);
+        return workspace.CurrentObject;
     }
 }
