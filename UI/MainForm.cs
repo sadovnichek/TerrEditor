@@ -96,12 +96,6 @@ public partial class MainForm : Form
         ConfigureChangeBackgroundButton();
     }
 
-    public sealed override Color BackColor
-    {
-        get => base.BackColor;
-        set => base.BackColor = value;
-    }
-
     private void Mouse_Down(object sender, MouseEventArgs e)
     {
         var dragSize = SystemInformation.DragSize;
@@ -211,11 +205,20 @@ public partial class MainForm : Form
     private static int call = 0;
     private void ChangeBackground(object sender, EventArgs e)
     {
-        var backgrounds = Background.GetBackgroundImages().ToArray();
+        var backgrounds = GetBackgroundImages().ToArray();
         _panel.BackgroundImage = backgrounds.ToArray()[call % backgrounds.Length];
         call++;
     }
 
+    private static IEnumerable<Image> GetBackgroundImages()
+    {
+        yield return Image.FromFile("./wooden.jpeg");
+        yield return Image.FromFile("./dessert.jpg");
+        yield return Image.FromFile("./forest.jpg");
+        yield return Image.FromFile("./stones.jpeg");
+        yield return Image.FromFile("./land.jpg");
+    }
+    
     public class DrawingPoints
     {
         private int index = 0;
@@ -292,26 +295,5 @@ public partial class MainForm : Form
     private void MainForm_Load(object sender, EventArgs e)
     {
 
-    }
-}
-
- enum ToolType
-{
-    Brush,
-    Eraser,
-    Highlighter,
-    Pipette,
-    Turner
-}
-
-public static class Background
-{
-    public static IEnumerable<Image> GetBackgroundImages()
-    {
-        yield return Image.FromFile("./wooden.jpeg");
-        yield return Image.FromFile("./dessert.jpg");
-        yield return Image.FromFile("./forest.jpg");
-        yield return Image.FromFile("./stones.jpeg");
-        yield return Image.FromFile("./land.jpg");
     }
 }
