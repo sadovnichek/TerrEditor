@@ -14,6 +14,6 @@ public class WorkingTools
         Tools.Add("highlighter",new Highlight(workSpace));
         Tools.Add("pipette",new Pipette(workSpace));
         Tools.Add("turner",new Turner(workSpace));
-        Tools.Add("zoomer",new Zoom(workSpace));
+        Tools.Add("zoomer",new Zoom());
     }
 }

@@ -3,7 +3,7 @@ using TerrEditor.Domain.Items;
 
 namespace TerrEditor.Domain.Tools;
 
-public class Turner:ITool
+public class Turner : ITool
 {
     public string Name { get; }
     public WorkSpace work;

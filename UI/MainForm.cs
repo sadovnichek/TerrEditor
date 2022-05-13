@@ -2,9 +2,11 @@ using TerrEditor.Application;
 using TerrEditor.Domain.Items;
 using TerrEditor.Domain.Tools;
 using UI.Buttons;
+
 #pragma warning disable CS8618
 
 namespace UI;
+
 public partial class MainForm : Form
 {
     private Panel _panel;
@@ -34,7 +36,7 @@ public partial class MainForm : Form
         _panel.Location = new Point(800, 200);
         _panel.AllowDrop = true;
         _panel.Size = new Size(800, 600);
-        _panel.BackgroundImage = Image.FromFile(Directory.GetCurrentDirectory()+@"\land.jpg");
+        _panel.BackgroundImage = Image.FromFile(Directory.GetCurrentDirectory() + @"\land.jpg");
         _panel.DragOver += Drag_Over!;
         _panel.DragDrop += Drag_Drop!;
         _panel.DragEnter += Drag_Enter!;
@@ -46,11 +48,11 @@ public partial class MainForm : Form
         var itemsLabel = new Label();
         itemsLabel.Location = new Point(0, 0);
         itemsLabel.Text = @"items";
-        
+
         var toolsLabel = new Label();
         toolsLabel.Location = new Point(150, 0);
         toolsLabel.Text = @"tools";
-        
+
         Controls.Add(itemsLabel);
         Controls.Add(toolsLabel);
     }
@@ -63,7 +65,7 @@ public partial class MainForm : Form
 
     private void ConfigureToolButtons()
     {
-        Controls.Add(new ToolButton(new Rectangle(150, 20, 100, 100), Resources.eraser,ToolType.Eraser));
+        Controls.Add(new ToolButton(new Rectangle(150, 20, 100, 100), Resources.eraser, ToolType.Eraser));
     }
 
     private void ConfigureChangeBackgroundButton()
@@ -80,7 +82,7 @@ public partial class MainForm : Form
         changeBackgroundButton.Click += ChangeBackground!;
         Controls.Add(changeBackgroundButton);
     }
-    
+
     public MainForm(WorkService service)
     {
         WindowState = FormWindowState.Maximized;
@@ -99,7 +101,7 @@ public partial class MainForm : Form
     {
         var dragSize = SystemInformation.DragSize;
         _dragBoxFromMouseDown = new Rectangle(new Point(e.X - (dragSize.Width / 2),
-                         e.Y - (dragSize.Height / 2)), dragSize);
+            e.Y - (dragSize.Height / 2)), dragSize);
         switch (sender)
         {
             case Button clickedButton:
@@ -107,7 +109,7 @@ public partial class MainForm : Form
                 _currentSelectedImage = new Bitmap(clickedButton.Image);
                 break;
             }
-            case PictureBox clickedPictureBox:
+            case UserPictureBox clickedPictureBox:
             {
                 _currentSelectedImage = new Bitmap(clickedPictureBox.Image);
                 break;
@@ -133,15 +135,17 @@ public partial class MainForm : Form
                 {
                     clickedButton.DoDragDrop(_currentSelectedImage, DragDropEffects.All);
                 }
+
                 break;
             }
-            case PictureBox pictureBox when e.Button == MouseButtons.Left:
+            case UserPictureBox pictureBox when e.Button == MouseButtons.Left:
             {
                 if (_dragBoxFromMouseDown != Rectangle.Empty && !_dragBoxFromMouseDown.Contains(e.X, e.Y))
                 {
                     pictureBox.DoDragDrop(_currentSelectedImage, DragDropEffects.All);
                     _panel.Controls.Remove(pictureBox);
                 }
+
                 break;
             }
         }
@@ -149,17 +153,18 @@ public partial class MainForm : Form
 
     private void Drag_Over(object sender, DragEventArgs e)
     {
-        e.Effect = (e.AllowedEffect & DragDropEffects.Move) == DragDropEffects.Move 
-            ? DragDropEffects.Move : DragDropEffects.None;
+        e.Effect = (e.AllowedEffect & DragDropEffects.Move) == DragDropEffects.Move
+            ? DragDropEffects.Move
+            : DragDropEffects.None;
     }
 
-    private PictureBox CreatePictureBox()
+    private UserPictureBox CreatePictureBox()
     {
-        var temp = new PictureBox();
+        var temp = new UserPictureBox();
         temp.Width = _currentSelectedImage.Width;
         temp.Height = _currentSelectedImage.Height;
         temp.Image = _currentSelectedImage;
-        temp.Location = new Point(Cursor.Position.X - _panel.Location.X - temp.Image.Width / 2, 
+        temp.Location = new Point(Cursor.Position.X - _panel.Location.X - temp.Image.Width / 2,
             Cursor.Position.Y - _panel.Location.Y - temp.Image.Height / 2);
         temp.BackColor = Color.Transparent;
         temp.Visible = true;
@@ -169,7 +174,7 @@ public partial class MainForm : Form
         temp.Click += OnPictureBoxClick;
         return temp;
     }
-    
+
     private void Drag_Drop(object sender, DragEventArgs e)
     {
         if (e.Effect == DragDropEffects.Move)
@@ -178,33 +183,38 @@ public partial class MainForm : Form
         }
     }
 
-    private void OnPictureBoxClick(object? sender, EventArgs eventArgs)
+    private void OnPictureBoxClick(object sender, EventArgs eventArgs)
     {
-        var pb = (PictureBox)sender;
-        _service.SetItem(pb.Location,pb.Size,pb.Name);
-        _service.DoAction();
-        if (_service.currentType == ToolType.Eraser)
+        if (sender is UserPictureBox pictureBox)
         {
-            foreach (var x in _panel.Controls)
+            _service.SetItem(new Item(pictureBox.Location, pictureBox.Size));
+            if (_service.currentType == ToolType.Eraser)
             {
-                if (x.Equals(pb))
-                    _panel.Controls.Remove((PictureBox)x);
+                _panel.Controls.Remove(pictureBox);
+            }
+            else
+            {
+                _service.SetToZoom();
+                pictureBox.Size = _service.DoAction().Size; // происходит оборачивание item в picture box,
+                pictureBox.Image = ResizeImage(pictureBox.Image, pictureBox.Size);// а надо в application
             }
         }
     }
-    private  Image TurnImage(Image imgToResize)
+
+    private Image TurnImage(Image imgToResize)
     {
         var a = new Bitmap(imgToResize);
         a.RotateFlip(RotateFlipType.Rotate90FlipX);
         return new Bitmap(imgToResize);
     }
-    
+
     private void Drag_Enter(object sender, DragEventArgs e)
     {
         e.Effect = DragDropEffects.None;
     }
-    
+
     private static int call = 0;
+
     private void ChangeBackground(object sender, EventArgs e)
     {
         var backgrounds = GetBackgroundImages().ToArray();
@@ -220,11 +230,12 @@ public partial class MainForm : Form
         yield return Image.FromFile("./stones.jpeg");
         yield return Image.FromFile("./land.jpg");
     }
-    
+
     public class DrawingPoints
     {
         private int index = 0;
         private Point[] points;
+
         public DrawingPoints(int size)
         {
             if (size <= 0)
@@ -268,7 +279,7 @@ public partial class MainForm : Form
         drawingImage = new Bitmap(rectangle.Width, rectangle.Height);
         graphics = Graphics.FromImage(drawingImage);
     }
-    
+
     private void pictureBox1_MouseDown(object sender, MouseEventArgs e)
     {
         isDrawing = true;
@@ -293,9 +304,8 @@ public partial class MainForm : Form
             drawingPoints.DrawPoint(e.X, e.Y);
         }
     }
-    
+
     private void MainForm_Load(object sender, EventArgs e)
     {
-
     }
 }

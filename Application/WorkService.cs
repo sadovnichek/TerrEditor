@@ -1,4 +1,5 @@
 ﻿using System.Drawing;
+using System.Windows.Forms;
 using TerrEditor.Domain;
 using TerrEditor.Domain.Items;
 using TerrEditor.Domain.Tools;
@@ -46,14 +47,13 @@ public class WorkService
         currentType = ToolType.Pipette;
     }
 
-    public void SetItem(Point loc,Size siz,string name)
+    public void SetItem(Item item)
     {
-        CurrentItem = new Item(loc,siz,name);
+        CurrentItem = item;
     }
 
     public Item DoAction()
     {
         return CurrentTool.DoAction(CurrentItem);
     }
-    
 }

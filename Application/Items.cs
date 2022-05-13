@@ -6,17 +6,16 @@ namespace TerrEditor.Application;
 
 public class Items
 {
-
     public Item CurrentItem;
 
     public Items(Item item)
     {
-        CurrentItem = new Item(new Point(1, 1), new Size(1, 1), "test");
+        CurrentItem = new Item(new Point(1, 1), new Size(1, 1));
     }
 
-    public void Add(string Name, Point location,Size size)
+    public void Add(Point location,Size size)
     {
-        CurrentItem=new Item(location, size, Name);
+        CurrentItem=new Item(location, size);
     }
     
 }
