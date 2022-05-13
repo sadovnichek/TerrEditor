@@ -10,10 +10,10 @@ public class ToolButton : UserButton
         Image = MainForm.ResizeImage(image, geometry.Size);
         BackColor = Color.White;
         if (toolType == ToolType.Eraser)
-            Click += OnClickkHandle;
+            Click += EraserHandler;
     }
 
-    private void OnClickkHandle(object? sender, EventArgs e)
+    private void EraserHandler(object? sender, EventArgs e)
     {
 
         BackColor = (BackColor == Color.White) ? Color.CornflowerBlue : Color.White;

@@ -185,7 +185,11 @@ public partial class MainForm : Form
         _service.DoAction();
         if (_service.currentType == ToolType.Eraser)
         {
-            pb.InitialImage = null;
+            foreach (var x in _panel.Controls)
+            {
+                if (x.Equals(pb))
+                    _panel.Controls.Remove((PictureBox)x);
+            }
         }
     }
     private  Image TurnImage(Image imgToResize)
