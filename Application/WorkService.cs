@@ -9,37 +9,51 @@ public class WorkService
 {
     private WorkingTools tools;
     public ITool? CurrentTool;
+    private Item CurrentItem;
+    public ToolType currentType;
     
     public WorkService(WorkSpace workSpace)
     {
         CurrentTool = default;
         tools = new WorkingTools(workSpace);
+        CurrentItem = default;
     }
 
     public void SetToTurn()
     {
        CurrentTool=tools.Tools["turner"];
+       currentType = ToolType.Turner;
     }
-    public Item DoZoom(Item item)
+    public void SetToZoom()
     {
-        return tools.Tools["zoomer"].DoAction(item);
+        CurrentTool=tools.Tools["zoomer"];
+        currentType = ToolType.Zoom;
+    }
+    
+    public void SetToErase()
+    {
+        CurrentTool=tools.Tools["eraser"];
+        currentType = ToolType.Eraser;
+    }
+    public void SetToHighlight()
+    {
+        CurrentTool=tools.Tools["highlighter"];
+        currentType = ToolType.Highlighter;
+    }
+    public void SetToPipette()
+    {
+        CurrentTool=tools.Tools["pipette"];
+        currentType = ToolType.Pipette;
     }
 
-    public Item DoTurn(Item item)
+    public void SetItem(Point loc,Size siz,string name)
     {
-        return tools.Tools["turner"].DoAction(item);
+        CurrentItem = new Item(loc,siz,name);
     }
-    public Item DoErase(Item item)
+
+    public Item DoAction()
     {
-        return tools.Tools["eraser"].DoAction(item);
-    }
-    public Item DoHighlight(Item item)
-    {
-        return tools.Tools["highlighter"].DoAction(item);
-    }
-    public Item DoPipette(Item item)
-    {
-        return tools.Tools["pipette"].DoAction(item);
+        return CurrentTool.DoAction(CurrentItem);
     }
     
 }

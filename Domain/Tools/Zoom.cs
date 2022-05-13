@@ -17,7 +17,7 @@ public class Zoom : ITool
     
     private Size DoZoom(Item item)
     {
-        return new Size(item.Size.Width+20,item.Size.Height+20);;
+        return new Size(item.Size.Width+zoomDelta,item.Size.Height+zoomDelta);;
     }
 
     public Item DoAction(Item item)

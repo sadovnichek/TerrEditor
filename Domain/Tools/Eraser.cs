@@ -1,4 +1,5 @@
-﻿using TerrEditor.Domain.Items;
+﻿using System.Drawing;
+using TerrEditor.Domain.Items;
 
 namespace TerrEditor.Domain.Tools;
 
@@ -15,7 +16,7 @@ public class Eraser : ITool
     public Item DoAction(Item item)
     {
         workspace.CurrentObject = item;
-        workspace.CurrentCanvas.DeleteItem(item,item.Location);
+        workspace.CurrentObject.Size = new Size(0, 0);
         return workspace.CurrentObject;
     }
 }

@@ -1,5 +1,6 @@
 using TerrEditor.Application;
 using TerrEditor.Domain.Items;
+using TerrEditor.Domain.Tools;
 using UI.Buttons;
 #pragma warning disable CS8618
 
@@ -11,8 +12,7 @@ public partial class MainForm : Form
     private Bitmap _currentSelectedImage;
     private Image _tree;
     private Image _chair;
-    private Items _items;
-    private WorkService _service;
+    public static WorkService _service;
 
     public static Image ResizeImage(Image imgToResize, Size size)
     {
@@ -63,7 +63,7 @@ public partial class MainForm : Form
 
     private void ConfigureToolButtons()
     {
-        Controls.Add(new ToolButton(new Rectangle(150, 20, 100, 100), Resources.eraser));
+        Controls.Add(new ToolButton(new Rectangle(150, 20, 100, 100), Resources.eraser,ToolType.Eraser));
     }
 
     private void ConfigureChangeBackgroundButton()
@@ -84,7 +84,6 @@ public partial class MainForm : Form
     public MainForm(WorkService service)
     {
         WindowState = FormWindowState.Maximized;
-        _items = new Items(); 
         _service = service;
         BackColor = Color.Azure;
         InitializeComponent();
@@ -164,10 +163,10 @@ public partial class MainForm : Form
             Cursor.Position.Y - _panel.Location.Y - temp.Image.Height / 2);
         temp.BackColor = Color.Transparent;
         temp.Visible = true;
-        temp.MouseClick += OnPictureBoxClick!;
         temp.MouseDown += Mouse_Down!;
         temp.MouseUp += Mouse_Up!;
         temp.MouseMove += Move_Mouse!;
+        temp.Click += OnPictureBoxClick;
         return temp;
     }
     
@@ -179,15 +178,14 @@ public partial class MainForm : Form
         }
     }
 
-    private void OnPictureBoxClick(object sender, MouseEventArgs e)
+    private void OnPictureBoxClick(object? sender, EventArgs eventArgs)
     {
-        if (sender is PictureBox pictureBox)
+        var pb = (PictureBox)sender;
+        _service.SetItem(pb.Location,pb.Size,pb.Name);
+        _service.DoAction();
+        if (_service.currentType == ToolType.Eraser)
         {
-            var test=_service.DoZoom(new Item(new Point(1,1),pictureBox.Size,"test"));
-            pictureBox.Size = test.Size;
-            pictureBox.Image = ResizeImage(pictureBox.Image,
-                pictureBox.Size);
-            pictureBox.BorderStyle = BorderStyle.Fixed3D;
+            pb.InitialImage = null;
         }
     }
     private  Image TurnImage(Image imgToResize)

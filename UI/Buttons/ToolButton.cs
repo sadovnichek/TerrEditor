@@ -1,11 +1,23 @@
-﻿namespace UI.Buttons;
+﻿using TerrEditor.Application;
+using TerrEditor.Domain.Tools;
 
+namespace UI.Buttons;
+using  UI;
 public class ToolButton : UserButton
 {
-    public ToolButton(Rectangle geometry, Image image) : base(geometry, "")
+    public ToolButton(Rectangle geometry, Image image,ToolType toolType) : base(geometry, "")
     {
         Image = MainForm.ResizeImage(image, geometry.Size);
         BackColor = Color.White;
-        Click += (_, _) => BackColor = (BackColor == Color.White) ? Color.CornflowerBlue : Color.White;
+        if (toolType == ToolType.Eraser)
+            Click += OnClickkHandle;
+    }
+
+    private void OnClickkHandle(object? sender, EventArgs e)
+    {
+
+        BackColor = (BackColor == Color.White) ? Color.CornflowerBlue : Color.White;
+        MainForm._service.SetToErase();
     }
 }
+

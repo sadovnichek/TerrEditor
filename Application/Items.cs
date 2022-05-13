@@ -6,11 +6,17 @@ namespace TerrEditor.Application;
 
 public class Items
 {
-    public List<Item> ListOfItems = new();
+
+    public Item CurrentItem;
+
+    public Items(Item item)
+    {
+        CurrentItem = new Item(new Point(1, 1), new Size(1, 1), "test");
+    }
 
     public void Add(string Name, Point location,Size size)
     {
-        ListOfItems.Add(new Item(location, size, Name));
+        CurrentItem=new Item(location, size, Name);
     }
     
 }
