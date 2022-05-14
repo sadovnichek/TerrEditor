@@ -10,10 +10,10 @@ public class WorkingTools //singleton
 
     private WorkingTools()
     {
-        _tools.Add(ToolType.Eraser, new Eraser());
+        _tools.Add(ToolType.Eraser, Eraser.GetInstance());
         _tools.Add(ToolType.Highlighter, new Highlight());
         _tools.Add(ToolType.Pipette, new Pipette());
-        _tools.Add(ToolType.Turner, new Turner());
+        _tools.Add(ToolType.Turner, Turner.GetInstance());
         _tools.Add(ToolType.Zoom ,new Zoom());
     }
     

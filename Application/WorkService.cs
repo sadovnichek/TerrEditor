@@ -6,16 +6,16 @@ namespace TerrEditor.Application;
 
 public class WorkService
 {
-    private WorkingTools tools;
+    private WorkingTools _tools;
     private ITool _currentTool;
     private Item _currentItem;
+    public WorkSpace WorkSpace;
     public ToolType CurrentToolType;
     
     public WorkService(WorkSpace workSpace)
     {
-        _currentTool = default;
-        tools = WorkingTools.GetInstance();
-        _currentItem = default;
+        _tools = WorkingTools.GetInstance();
+        WorkSpace = workSpace;
     }
 
     public void SetItem(Item item)
@@ -25,7 +25,7 @@ public class WorkService
     
     public Item DoAction()
     {
-        _currentTool = tools.GetTool(CurrentToolType);
+        _currentTool = _tools.GetTool(CurrentToolType);
         return _currentTool.DoAction(_currentItem);
     }
 }

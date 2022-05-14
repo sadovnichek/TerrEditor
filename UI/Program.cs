@@ -15,7 +15,7 @@ static class Program
         // see https://aka.ms/applicationconfiguration.
         
         ApplicationConfiguration.Initialize();
-        var workSpace = new WorkSpace();
+        var workSpace = WorkSpace.GetInstance();
         var workingPlace = new WorkService(workSpace);
         var form = new MainForm(workingPlace);
         form.Text = @"Landscape Editor";

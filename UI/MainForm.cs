@@ -109,7 +109,7 @@ public partial class MainForm : Form
                 _currentSelectedImage = new Bitmap(clickedButton.Image);
                 break;
             }
-            case UserPictureBox clickedPictureBox:
+            case ItemPictureBox clickedPictureBox:
             {
                 _currentSelectedImage = new Bitmap(clickedPictureBox.Image);
                 break;
@@ -137,7 +137,7 @@ public partial class MainForm : Form
                 }
                 break;
             }
-            case UserPictureBox pictureBox when e.Button == MouseButtons.Left:
+            case ItemPictureBox pictureBox when e.Button == MouseButtons.Left:
             {
                 if (_dragBoxFromMouseDown != Rectangle.Empty && !_dragBoxFromMouseDown.Contains(e.X, e.Y))
                 {
@@ -156,9 +156,9 @@ public partial class MainForm : Form
             : DragDropEffects.None;
     }
 
-    private UserPictureBox CreatePictureBox(Image image)
+    private ItemPictureBox CreatePictureBox(Image image)
     {
-        var temp = new UserPictureBox();
+        var temp = new ItemPictureBox();
         temp.Width = image.Width;
         temp.Height = image.Height;
         temp.Image = image;
@@ -183,14 +183,14 @@ public partial class MainForm : Form
 
     private void OnPictureBoxClick(object sender, EventArgs eventArgs)
     {
-        if (sender is not UserPictureBox pictureBox) 
+        if (sender is not ItemPictureBox pictureBox) 
             return;
         if (eventArgs is not MouseEventArgs mouseEventArgs) 
             return;
         _service.SetItem(new Item(pictureBox.Location, pictureBox.Size));
         if (mouseEventArgs.Button == MouseButtons.Right)
             _service.CurrentToolType = ToolType.Turner;
-        if(mouseEventArgs.Button == MouseButtons.Left)
+        if(mouseEventArgs.Button == MouseButtons.Left && _service.CurrentToolType == ToolType.None)
             _service.CurrentToolType = ToolType.Zoom;
         switch (_service.CurrentToolType)
         {

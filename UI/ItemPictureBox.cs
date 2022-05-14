@@ -1,14 +1,18 @@
-﻿using Timer = System.Windows.Forms.Timer;
+﻿using TerrEditor.Domain.Items;
+using Timer = System.Windows.Forms.Timer;
 
 namespace UI;
 
-public sealed class UserPictureBox : Control
+public sealed class ItemPictureBox : Control
 {
     private readonly Timer _refresher;
     public Image Image { get; set; }
 
-    public UserPictureBox()
+    public Item Item;
+
+    public ItemPictureBox()
     {
+        Item = new Item(Location, Size);
         SetStyle(ControlStyles.SupportsTransparentBackColor, true);
         BackColor = Color.Transparent;
         _refresher = new Timer();
