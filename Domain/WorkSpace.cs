@@ -17,8 +17,4 @@ public  class WorkSpace
         CurrentObject = default;
         CurrentTool = default;
     }
-    
-    //методы
-    
-
 }

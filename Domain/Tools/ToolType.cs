@@ -2,7 +2,7 @@
 
 public enum ToolType
 {
-
+    None,
     Zoom,
     Turner,
     Brush,

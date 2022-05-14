@@ -14,7 +14,8 @@ public sealed class ToolButton : UserButton
     private void EraserHandler(object? sender, EventArgs e)
     {
         BackColor = (BackColor == Color.White) ? Color.CornflowerBlue : Color.White;
-        MainForm._service.SetToErase();
+        MainForm._service.CurrentToolType = (MainForm._service.CurrentToolType != ToolType.Eraser)
+            ? ToolType.Eraser : ToolType.None;
     }
 }
 

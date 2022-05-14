@@ -135,7 +135,6 @@ public partial class MainForm : Form
                 {
                     clickedButton.DoDragDrop(_currentSelectedImage, DragDropEffects.All);
                 }
-
                 break;
             }
             case UserPictureBox pictureBox when e.Button == MouseButtons.Left:
@@ -145,7 +144,6 @@ public partial class MainForm : Form
                     pictureBox.DoDragDrop(_currentSelectedImage, DragDropEffects.All);
                     _panel.Controls.Remove(pictureBox);
                 }
-
                 break;
             }
         }
@@ -158,12 +156,12 @@ public partial class MainForm : Form
             : DragDropEffects.None;
     }
 
-    private UserPictureBox CreatePictureBox()
+    private UserPictureBox CreatePictureBox(Image image)
     {
         var temp = new UserPictureBox();
-        temp.Width = _currentSelectedImage.Width;
-        temp.Height = _currentSelectedImage.Height;
-        temp.Image = _currentSelectedImage;
+        temp.Width = image.Width;
+        temp.Height = image.Height;
+        temp.Image = image;
         temp.Location = new Point(Cursor.Position.X - _panel.Location.X - temp.Image.Width / 2,
             Cursor.Position.Y - _panel.Location.Y - temp.Image.Height / 2);
         temp.BackColor = Color.Transparent;
@@ -179,33 +177,44 @@ public partial class MainForm : Form
     {
         if (e.Effect == DragDropEffects.Move)
         {
-            _panel.Controls.Add(CreatePictureBox());
+            _panel.Controls.Add(CreatePictureBox(_currentSelectedImage));
         }
     }
 
     private void OnPictureBoxClick(object sender, EventArgs eventArgs)
     {
-        if (sender is UserPictureBox pictureBox)
+        if (sender is not UserPictureBox pictureBox) 
+            return;
+        if (eventArgs is not MouseEventArgs mouseEventArgs) 
+            return;
+        _service.SetItem(new Item(pictureBox.Location, pictureBox.Size));
+        if (mouseEventArgs.Button == MouseButtons.Right)
+            _service.CurrentToolType = ToolType.Turner;
+        if(mouseEventArgs.Button == MouseButtons.Left)
+            _service.CurrentToolType = ToolType.Zoom;
+        switch (_service.CurrentToolType)
         {
-            _service.SetItem(new Item(pictureBox.Location, pictureBox.Size));
-            if (_service.currentType == ToolType.Eraser)
+            case ToolType.Eraser:
             {
                 _panel.Controls.Remove(pictureBox);
+                break;
             }
-            else
+            case ToolType.Zoom:
             {
-                _service.SetToZoom();
-                pictureBox.Size = _service.DoAction().Size; // происходит оборачивание item в picture box,
-                pictureBox.Image = ResizeImage(pictureBox.Image, pictureBox.Size);// а надо в application
+                _service.CurrentToolType = ToolType.Zoom;
+                pictureBox.Size = _service.DoAction().Size;
+                pictureBox.Image = ResizeImage(pictureBox.Image, pictureBox.Size);
+                break;
+            }
+            case ToolType.Turner:
+            {
+                var image = pictureBox.Image;
+                image.RotateFlip(RotateFlipType.Rotate90FlipXY);
+                _panel.Controls.Add(CreatePictureBox(image));
+                _panel.Controls.Remove(pictureBox);
+                break;
             }
         }
-    }
-
-    private Image TurnImage(Image imgToResize)
-    {
-        var a = new Bitmap(imgToResize);
-        a.RotateFlip(RotateFlipType.Rotate90FlipX);
-        return new Bitmap(imgToResize);
     }
 
     private void Drag_Enter(object sender, DragEventArgs e)

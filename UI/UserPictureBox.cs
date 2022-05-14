@@ -13,7 +13,7 @@ public sealed class UserPictureBox : Control
         BackColor = Color.Transparent;
         _refresher = new Timer();
         _refresher.Tick += TimerOnTick!;
-        _refresher.Interval = 50;
+        _refresher.Interval = 10;
         _refresher.Enabled = true;
         _refresher.Start();
     }
@@ -49,6 +49,4 @@ public sealed class UserPictureBox : Control
         RecreateHandle();
         _refresher.Stop();
     }
-
-    
 }
