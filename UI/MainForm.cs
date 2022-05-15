@@ -3,7 +3,8 @@ using TerrEditor.Application;
 using TerrEditor.Domain.Items;
 using TerrEditor.Domain.Tools;
 using UI.Buttons;
-
+using MySql.Data.MySqlClient;
+using DBTerr;
 #pragma warning disable CS8618
 
 namespace UI;
@@ -16,19 +17,34 @@ public partial class MainForm : Form
     private Image _tree;
     private Image _chair;
     public static WorkService _service;
+    public Dictionary<string, Bitmap> Images = new Dictionary<string, Bitmap>(); // Мб сделать листом и в SetImages() пробегаться в цикле и заполнять типа ms = new MemoryStream(Images[i]);
 
     public static Image ResizeImage(Image imgToResize, Size size)
     {
         return new Bitmap(imgToResize, size);
     }
 
-    private void SetImages() // загрузка из БД
+    private void FillImagesFromDB()
     {
-        _tree = new Bitmap("./tree.png");
-        _tree = ResizeImage(_tree, new Size(100, 100));
-        _chair = new Bitmap("./chair.png");
-        _chair = ResizeImage(_chair, new Size(100, 100));
-        setSize();
+        MySqlConnection conn = DBUtils.GetDBConnection();
+        conn.Open();
+        for (var i = 1; i < 4; i++) // 3 заменить на len(ассеты)
+        {
+            string sqlImg = "SELECT assetImage FROM assets WHERE assetId = "; // Сунуть в один запрос?
+            string sqlName = "SELECT assetName FROM assets WHERE assetId = ";
+            sqlImg += i;
+            sqlName += i;
+
+            MySqlCommand command1 = new MySqlCommand(sqlImg, conn);
+            byte[] bytesResponse = (byte[])command1.ExecuteScalar();
+            var imageResponse = new Bitmap(Image.FromStream(new MemoryStream(bytesResponse)));
+            imageResponse = (Bitmap)ResizeImage(imageResponse, new Size(100, 100));
+
+            MySqlCommand command2 = new MySqlCommand(sqlName, conn);
+            var name = command2.ExecuteScalar().ToString();
+
+            this.Images[name] = imageResponse; // Что-нибудь сделать с нулом.
+        }
     }
 
     private void ConfigurePanel()
@@ -37,7 +53,7 @@ public partial class MainForm : Form
         _panel.Location = new Point(800, 200);
         _panel.AllowDrop = true;
         _panel.Size = new Size(800, 600);
-        _panel.BackgroundImage = Image.FromFile(Directory.GetCurrentDirectory() + @"\land.jpg");
+        _panel.BackgroundImage = Images["land"];
         _panel.DragOver += Drag_Over!;
         _panel.DragDrop += Drag_Drop!;
         _panel.DragEnter += Drag_Enter!;
@@ -60,8 +76,8 @@ public partial class MainForm : Form
 
     private void ConfigureItemButtons()
     {
-        Controls.Add(new ItemButton(new Rectangle(0, 20, 100, 100), _tree, Mouse_Down!, Mouse_Up!, Move_Mouse!));
-        Controls.Add(new ItemButton(new Rectangle(0, 120, 100, 100), _chair, Mouse_Down!, Mouse_Up!, Move_Mouse!));
+        Controls.Add(new ItemButton(new Rectangle(0, 20, 100, 100), Images["tree"], Mouse_Down!, Mouse_Up!, Move_Mouse!));
+        Controls.Add(new ItemButton(new Rectangle(0, 120, 100, 100), Images["chair"], Mouse_Down!, Mouse_Up!, Move_Mouse!));
     }
 
     private void ConfigureToolButtons()
@@ -87,11 +103,12 @@ public partial class MainForm : Form
     public MainForm(WorkService service)
     {
         WindowState = FormWindowState.Maximized;
+        FillImagesFromDB();
         _service = service;
         BackColor = Color.Azure;
         InitializeComponent();
         ConfigurePanel();
-        SetImages();
+        setSize();
         SetLabels();
         ConfigureItemButtons();
         ConfigureToolButtons();

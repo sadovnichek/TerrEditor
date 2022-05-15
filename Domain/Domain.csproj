@@ -16,4 +16,10 @@
       <PackageReference Include="System.Drawing.Common" Version="7.0.0-preview.2.22152.2" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Reference Include="MySql.Data">
+        <HintPath>..\..\..\..\..\Program Files (x86)\MySQL\Connector NET 8.0\Assemblies\net6.0\MySql.Data.dll</HintPath>
+      </Reference>
+    </ItemGroup>
+
 </Project>
