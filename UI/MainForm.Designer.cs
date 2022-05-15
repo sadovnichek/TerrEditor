@@ -77,6 +77,7 @@ partial class MainForm
             this.Clear.TabIndex = 2;
             this.Clear.Text = "Clear";
             this.Clear.UseVisualStyleBackColor = true;
+            this.Clear.Click += new EventHandler(this.Clear_Click);
             // 
             // panel1
             // 
@@ -111,6 +112,7 @@ partial class MainForm
             this.ColorGreen.Size = new System.Drawing.Size(111, 23);
             this.ColorGreen.TabIndex = 3;
             this.ColorGreen.UseVisualStyleBackColor = false;
+            this.ColorGreen.Click += new EventHandler(this.ColorGreen_Click);
             // 
             // ColorYellow
             // 
@@ -123,6 +125,7 @@ partial class MainForm
             this.ColorYellow.Size = new System.Drawing.Size(111, 23);
             this.ColorYellow.TabIndex = 2;
             this.ColorYellow.UseVisualStyleBackColor = false;
+            this.ColorYellow.Click += new EventHandler(this.ColorYellow_Click);
             // 
             // ColorRed
             // 
@@ -134,6 +137,7 @@ partial class MainForm
             this.ColorRed.Size = new System.Drawing.Size(111, 23);
             this.ColorRed.TabIndex = 1;
             this.ColorRed.UseVisualStyleBackColor = false;
+            this.ColorRed.Click += new EventHandler(this.ColorRed_Click);
             // 
             // ColorBlack
             // 
@@ -145,6 +149,7 @@ partial class MainForm
             this.ColorBlack.Size = new System.Drawing.Size(111, 23);
             this.ColorBlack.TabIndex = 0;
             this.ColorBlack.UseVisualStyleBackColor = false;
+            this.ColorBlack.Click += new EventHandler(this.ColorBlack_Click);
             // 
             // MainForm
             // 
