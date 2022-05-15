@@ -1,3 +1,4 @@
+using System.Drawing.Drawing2D;
 using TerrEditor.Application;
 using TerrEditor.Domain.Items;
 using TerrEditor.Domain.Tools;
@@ -208,10 +209,12 @@ public partial class MainForm : Form
             }
             case ToolType.Turner:
             {
-                var image = pictureBox.Image;
-                image.RotateFlip(RotateFlipType.Rotate90FlipXY);
-                _panel.Controls.Add(CreatePictureBox(image));
+                _service.CurrentToolType = ToolType.Turner;
+                var image = RotateImage(new Bitmap(pictureBox.Image),_service.DoAction().Location);
+                var pb = CreatePictureBox(image);
                 _panel.Controls.Remove(pictureBox);
+                _panel.Controls.Add(pb);
+                
                 break;
             }
         }
@@ -316,5 +319,17 @@ public partial class MainForm : Form
 
     private void MainForm_Load(object sender, EventArgs e)
     {
+    }
+    private Bitmap RotateImage(Bitmap bmp,Point location) {
+        Bitmap rotatedImage = new Bitmap(bmp.Width, bmp.Height);
+        rotatedImage.SetResolution(bmp.HorizontalResolution, bmp.VerticalResolution);
+        using Graphics g = Graphics.FromImage(rotatedImage);
+        g.InterpolationMode = InterpolationMode.HighQualityBicubic;
+        g.TranslateTransform(location.X,location.Y);
+        g.RotateTransform(30);
+        g.TranslateTransform(-location.X, - location.Y);
+        g.DrawImage(bmp, new Point(0, 0));
+
+        return rotatedImage;
     }
 }

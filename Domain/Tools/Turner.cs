@@ -22,6 +22,7 @@ public class Turner : ITool
     
     public Item DoAction(Item item)
     {
+        item.Location = new Point(item.Size.Width/2, item.Size.Height/2);
         return item;
     }
 }
