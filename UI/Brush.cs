@@ -107,8 +107,12 @@ public partial class MainForm : Form
         pictureBox1.Image = drawingImage;
     }
     
-    private void PenWidth_ValueChabged(object sender, EventArgs e){
-        //pen.Width = PenWidth.Value;
+    private void Palette_Click(object sender, EventArgs e){
+        if (colorDlg.ShowDialog() == DialogResult.OK)
+        {
+            pen.Color = colorDlg.Color;
+            ((Button) sender).BackColor = colorDlg.Color;
+        }
     }
 
     private void MainForm_Load(object sender, EventArgs e)
