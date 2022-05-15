@@ -3,19 +3,21 @@
 namespace UI.Buttons;
 public sealed class ToolButton : UserButton
 {
+    private ToolType currentToolType;
+    
     public ToolButton(Rectangle geometry, Image image, ToolType toolType) : base(geometry, "")
     {
         Image = MainForm.ResizeImage(image, geometry.Size);
         BackColor = Color.White;
-        if (toolType == ToolType.Eraser)
-            Click += EraserHandler;
+        currentToolType = toolType;
+        Click += ToolHandler;
     }
 
-    private void EraserHandler(object? sender, EventArgs e)
+    private void ToolHandler(object? sender, EventArgs e)
     {
-        BackColor = (BackColor == Color.White) ? Color.CornflowerBlue : Color.White;
-        MainForm._service.CurrentToolType = (MainForm._service.CurrentToolType != ToolType.Eraser)
-            ? ToolType.Eraser : ToolType.None;
+        BackColor = (BackColor == Color.White) ? Color.Fuchsia : Color.White;
+        MainForm._service.CurrentToolType = (MainForm._service.CurrentToolType != currentToolType)
+            ? currentToolType : ToolType.None;
     }
 }
 

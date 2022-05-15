@@ -50,7 +50,7 @@ public partial class MainForm : Form
     private void ConfigurePanel()
     {
         _panel = new Panel();
-        _panel.Location = new Point(800, 200);
+        _panel.Location = new Point(500, 100);
         _panel.AllowDrop = true;
         _panel.Size = new Size(800, 600);
         _panel.BackgroundImage = Images["land"];
@@ -67,7 +67,7 @@ public partial class MainForm : Form
         itemsLabel.Text = @"items";
 
         var toolsLabel = new Label();
-        toolsLabel.Location = new Point(150, 0);
+        toolsLabel.Location = new Point(200, 0);
         toolsLabel.Text = @"tools";
 
         Controls.Add(itemsLabel);
@@ -82,16 +82,21 @@ public partial class MainForm : Form
 
     private void ConfigureToolButtons()
     {
-        Controls.Add(new ToolButton(new Rectangle(150, 20, 100, 100), Resources.eraser, ToolType.Eraser));
+        Controls.Add(new ToolButton(new Rectangle(200, 20, 50, 50), Resources.eraser, ToolType.Eraser));
+        Controls.Add(new ToolButton(new Rectangle(250, 20, 50, 50), Resources.brush, ToolType.Brush));
+        Controls.Add(new ToolButton(new Rectangle(300, 20, 50, 50), Resources.pipette, ToolType.Pipette));
+        Controls.Add(new ToolButton(new Rectangle(350, 20, 50, 50), Resources.transformer, ToolType.Turner));
+        Controls.Add(new ToolButton(new Rectangle(400, 20, 50, 50), Resources.zoom, ToolType.Zoom));
+        Controls.Add(new ToolButton(new Rectangle(450, 20, 50, 50), Resources.scale, ToolType.None));
     }
 
     private void ConfigureChangeBackgroundButton()
     {
         var changeBackgroundButton = new Button
         {
-            Location = new Point(1000, 100),
+            Location = new Point(1650, 0),
             Text = @"Change background",
-            Size = new Size(200, 100),
+            Size = new Size(130, 70),
             BackColor = Color.White
         };
         changeBackgroundButton.MouseEnter += (_, _) => changeBackgroundButton.BackColor = Color.CornflowerBlue;
@@ -206,10 +211,6 @@ public partial class MainForm : Form
         if (eventArgs is not MouseEventArgs mouseEventArgs) 
             return;
         _service.SetItem(new Item(pictureBox.Location, pictureBox.Size));
-        if (mouseEventArgs.Button == MouseButtons.Right)
-            _service.CurrentToolType = ToolType.Turner;
-        if(mouseEventArgs.Button == MouseButtons.Left && _service.CurrentToolType == ToolType.None)
-            _service.CurrentToolType = ToolType.Zoom;
         switch (_service.CurrentToolType)
         {
             case ToolType.Eraser:
@@ -219,14 +220,12 @@ public partial class MainForm : Form
             }
             case ToolType.Zoom:
             {
-                _service.CurrentToolType = ToolType.Zoom;
                 pictureBox.Size = _service.DoAction().Size;
                 pictureBox.Image = ResizeImage(pictureBox.Image, pictureBox.Size);
                 break;
             }
             case ToolType.Turner:
             {
-                _service.CurrentToolType = ToolType.Turner;
                 var image = RotateImage(new Bitmap(pictureBox.Image),_service.DoAction().Location);
                 var pb = CreatePictureBox(image);
                 _panel.Controls.Remove(pictureBox);
@@ -234,6 +233,12 @@ public partial class MainForm : Form
                 
                 break;
             }
+            case ToolType.Brush:
+                break;
+            case ToolType.Pipette:
+                break;
+            case ToolType.Highlighter:
+                break;
         }
     }
 
