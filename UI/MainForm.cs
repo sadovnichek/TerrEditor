@@ -34,7 +34,7 @@ public partial class MainForm : Form
     private void ConfigurePanel()
     {
         _panel = new Panel();
-        _panel.Location = new Point(800, 200);
+        _panel.Location = new Point(500, 100);
         _panel.AllowDrop = true;
         _panel.Size = new Size(800, 600);
         _panel.BackgroundImage = Image.FromFile(Directory.GetCurrentDirectory() + @"\land.jpg");
@@ -51,27 +51,21 @@ public partial class MainForm : Form
         itemsLabel.Text = @"items";
 
         var toolsLabel = new Label();
-        toolsLabel.Location = new Point(150, 0);
+        toolsLabel.Location = new Point(200, 0);
         toolsLabel.Text = @"tools";
 
         Controls.Add(itemsLabel);
         Controls.Add(toolsLabel);
     }
 
-    private void ConfigureItemButtons()
-    {
-        Controls.Add(new ItemButton(new Rectangle(0, 20, 100, 100), _tree, Mouse_Down!, Mouse_Up!, Move_Mouse!));
-        Controls.Add(new ItemButton(new Rectangle(0, 120, 100, 100), _chair, Mouse_Down!, Mouse_Up!, Move_Mouse!));
-    }
-
     private void ConfigureToolButtons()
     {
-        Controls.Add(new ToolButton(new Rectangle(150, 20, 50, 50), Resources.eraser, ToolType.Eraser));
-        Controls.Add(new ToolButton(new Rectangle(200, 20, 50, 50), Resources.brush, ToolType.Brush));
-        Controls.Add(new ToolButton(new Rectangle(250, 20, 50, 50), Resources.pipette, ToolType.Pipette));
-        Controls.Add(new ToolButton(new Rectangle(300, 20, 50, 50), Resources.transformer, ToolType.Turner));
-        Controls.Add(new ToolButton(new Rectangle(350, 20, 50, 50), Resources.zoom, ToolType.Zoom));
-        Controls.Add(new ToolButton(new Rectangle(400, 20, 50, 50), Resources.scale, ToolType.None));
+        Controls.Add(new ToolButton(new Rectangle(200, 20, 50, 50), Resources.eraser, ToolType.Eraser));
+        Controls.Add(new ToolButton(new Rectangle(250, 20, 50, 50), Resources.brush, ToolType.Brush));
+        Controls.Add(new ToolButton(new Rectangle(300, 20, 50, 50), Resources.pipette, ToolType.Pipette));
+        Controls.Add(new ToolButton(new Rectangle(350, 20, 50, 50), Resources.transformer, ToolType.Turner));
+        Controls.Add(new ToolButton(new Rectangle(400, 20, 50, 50), Resources.zoom, ToolType.Zoom));
+        Controls.Add(new ToolButton(new Rectangle(450, 20, 50, 50), Resources.scale, ToolType.None));
     }
 
     private void ConfigureChangeBackgroundButton()
