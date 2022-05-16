@@ -1,4 +1,5 @@
 ﻿using TerrEditor.Domain.Tools;
+using ImagesInteraction;
 
 namespace UI.Buttons;
 public sealed class ToolButton : UserButton
@@ -7,7 +8,7 @@ public sealed class ToolButton : UserButton
     
     public ToolButton(Rectangle geometry, Image image, ToolType toolType) : base(geometry, "")
     {
-        Image = MainForm.ResizeImage(image, geometry.Size);
+        Image = ImagesMethod.ResizeImage(image, geometry.Size);
         BackColor = Color.White;
         currentToolType = toolType;
         Click += ToolHandler;

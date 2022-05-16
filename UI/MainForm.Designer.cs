@@ -202,4 +202,6 @@ partial class MainForm
     private Button ColorRed;
     private Button ColorBlack;
     private Panel panel2;
+    private VScrollBar ScrollBar;
+    private FlowLayoutPanel itemsPanel;
 }

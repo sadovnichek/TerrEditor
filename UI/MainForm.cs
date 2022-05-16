@@ -5,6 +5,7 @@ using TerrEditor.Domain.Tools;
 using UI.Buttons;
 using MySql.Data.MySqlClient;
 using DBTerr;
+using ImagesInteraction;
 #pragma warning disable CS8618
 
 namespace UI;
@@ -14,46 +15,19 @@ public partial class MainForm : Form
     private Panel _panel;
     private Rectangle _dragBoxFromMouseDown;
     private Bitmap _currentSelectedImage;
-    private Image _tree;
-    private Image _chair;
     public static WorkService _service;
-    public Dictionary<string, Bitmap> Images = new Dictionary<string, Bitmap>(); // Мб сделать листом и в SetImages() пробегаться в цикле и заполнять типа ms = new MemoryStream(Images[i]);
 
-    public static Image ResizeImage(Image imgToResize, Size size)
-    {
-        return new Bitmap(imgToResize, size);
-    }
+    public DBReqs Assets = new DBReqs("assets");
+    public DBReqs Tools = new DBReqs("tools");
 
-    private void FillImagesFromDB()
-    {
-        MySqlConnection conn = DBUtils.GetDBConnection();
-        conn.Open();
-        for (var i = 1; i < 4; i++) // 3 заменить на len(ассеты)
-        {
-            string sqlImg = "SELECT assetImage FROM assets WHERE assetId = "; // Сунуть в один запрос?
-            string sqlName = "SELECT assetName FROM assets WHERE assetId = ";
-            sqlImg += i;
-            sqlName += i;
-
-            MySqlCommand command1 = new MySqlCommand(sqlImg, conn);
-            byte[] bytesResponse = (byte[])command1.ExecuteScalar();
-            var imageResponse = new Bitmap(Image.FromStream(new MemoryStream(bytesResponse)));
-            imageResponse = (Bitmap)ResizeImage(imageResponse, new Size(100, 100));
-
-            MySqlCommand command2 = new MySqlCommand(sqlName, conn);
-            var name = command2.ExecuteScalar().ToString();
-
-            this.Images[name] = imageResponse; // Что-нибудь сделать с нулом.
-        }
-    }
-
+    
     private void ConfigurePanel()
     {
         _panel = new Panel();
         _panel.Location = new Point(500, 100);
         _panel.AllowDrop = true;
         _panel.Size = new Size(800, 600);
-        _panel.BackgroundImage = Images["land"];
+        _panel.BackgroundImage = Assets.ParsedDBInfo["land"];
         _panel.DragOver += Drag_Over!;
         _panel.DragDrop += Drag_Drop!;
         _panel.DragEnter += Drag_Enter!;
@@ -74,20 +48,14 @@ public partial class MainForm : Form
         Controls.Add(toolsLabel);
     }
 
-    private void ConfigureItemButtons()
-    {
-        Controls.Add(new ItemButton(new Rectangle(0, 20, 100, 100), Images["tree"], Mouse_Down!, Mouse_Up!, Move_Mouse!));
-        Controls.Add(new ItemButton(new Rectangle(0, 120, 100, 100), Images["chair"], Mouse_Down!, Mouse_Up!, Move_Mouse!));
-    }
-
     private void ConfigureToolButtons()
     {
-        Controls.Add(new ToolButton(new Rectangle(200, 20, 50, 50), Resources.eraser, ToolType.Eraser));
-        Controls.Add(new ToolButton(new Rectangle(250, 20, 50, 50), Resources.brush, ToolType.Brush));
-        Controls.Add(new ToolButton(new Rectangle(300, 20, 50, 50), Resources.pipette, ToolType.Pipette));
-        Controls.Add(new ToolButton(new Rectangle(350, 20, 50, 50), Resources.transformer, ToolType.Turner));
-        Controls.Add(new ToolButton(new Rectangle(400, 20, 50, 50), Resources.zoom, ToolType.Zoom));
-        Controls.Add(new ToolButton(new Rectangle(450, 20, 50, 50), Resources.scale, ToolType.None));
+        Controls.Add(new ToolButton(new Rectangle(200, 20, 50, 50), Tools.ParsedDBInfo["eraser"], ToolType.Eraser));
+        Controls.Add(new ToolButton(new Rectangle(250, 20, 50, 50), Tools.ParsedDBInfo["brush"], ToolType.Brush));
+        Controls.Add(new ToolButton(new Rectangle(300, 20, 50, 50), Tools.ParsedDBInfo["pipka"], ToolType.Pipette));
+        Controls.Add(new ToolButton(new Rectangle(350, 20, 50, 50), Tools.ParsedDBInfo["trans"], ToolType.Turner));
+        Controls.Add(new ToolButton(new Rectangle(400, 20, 50, 50), Tools.ParsedDBInfo["zoom"], ToolType.Zoom));
+        Controls.Add(new ToolButton(new Rectangle(450, 20, 50, 50), Tools.ParsedDBInfo["scale"], ToolType.None));
     }
 
     private void ConfigureChangeBackgroundButton()
@@ -108,7 +76,6 @@ public partial class MainForm : Form
     public MainForm(WorkService service)
     {
         WindowState = FormWindowState.Maximized;
-        FillImagesFromDB();
         _service = service;
         BackColor = Color.Azure;
         InitializeComponent();
@@ -221,7 +188,7 @@ public partial class MainForm : Form
             case ToolType.Zoom:
             {
                 pictureBox.Size = _service.DoAction().Size;
-                pictureBox.Image = ResizeImage(pictureBox.Image, pictureBox.Size);
+                pictureBox.Image = ImagesMethod.ResizeImage(pictureBox.Image, pictureBox.Size);
                 break;
             }
             case ToolType.Turner:
