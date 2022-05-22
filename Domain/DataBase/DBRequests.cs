@@ -1,41 +1,41 @@
-using MySql.Data.MySqlClient;
-using System;
 using System.Drawing;
 using ImagesInteraction;
+using MySql.Data.MySqlClient;
 
-namespace DBTerr
+namespace TerrEditor.Domain.DataBase
 {
     public class DBReqs
     {
-        private readonly string name;
-        private readonly long size;
-        private Dictionary<string, Bitmap> parsedDBInfo = new();
-        private MySqlConnection dBConn = DBUtils.GetDBConnection();
+        private readonly string _name;
+        private readonly long _dbSize;
+        private Dictionary<string, Bitmap> _parsedDbInfo = new();
+        private readonly MySqlConnection _dBConn = DBUtils.GetDBConnection();
+        private readonly Size _requiredSize;
 
-        public Dictionary<string, Bitmap> ParsedDBInfo { get { return this.parsedDBInfo; } private set { this.parsedDBInfo = value; } }
+        public Dictionary<string, Bitmap> ParsedDBInfo { get { return this._parsedDbInfo; } private set { this._parsedDbInfo = value; } }
 
         public DBReqs(string name)
         {
-            dBConn.Open(); // ƒолжен ли быть где-то close?
-            this.name = name;
-            this.size = getDBSize();
+            _dBConn.Open();
+            _name = name;
+            _dbSize = getDBSize();
             ParseInfoFromDB();
-            dBConn.Close();
+            _dBConn.Close();
         }
 
         private long getDBSize()
         {
-            var request = $"SELECT count(*) FROM {this.name}";
-            var resp = new MySqlCommand(request, dBConn);
+            var request = $"SELECT count(*) FROM {this._name}";
+            var resp = new MySqlCommand(request, _dBConn);
             return (long)resp.ExecuteScalar();
         }
 
         private void ParseInfoFromDB()
         {
-            for (var id = 1; id <= this.size; id++)
+            for (var id = 1; id <= this._dbSize; id++)
             {
-                string request = $"SELECT image, name FROM {this.name} WHERE id = {id}";
-                MySqlCommand resp = new MySqlCommand(request, dBConn);
+                string request = $"SELECT image, name FROM {this._name} WHERE id = {id}";
+                MySqlCommand resp = new MySqlCommand(request, _dBConn);
                 MySqlDataReader datareader = resp.ExecuteReader();
                 while(datareader.Read())
                 {
@@ -44,8 +44,7 @@ namespace DBTerr
 
                     var image = new Bitmap(Image.FromStream(new MemoryStream(bImage)));
                     image = (Bitmap)ImagesMethod.ResizeImage(image, new Size(100, 100)); //”Ѕ–ј“№
-
-                    this.parsedDBInfo[name] = image;
+                    _parsedDbInfo[name] = image;
                 }
                 datareader.Close();
             }

@@ -4,8 +4,9 @@ using TerrEditor.Domain.Items;
 using TerrEditor.Domain.Tools;
 using UI.Buttons;
 using MySql.Data.MySqlClient;
-using DBTerr;
 using ImagesInteraction;
+using TerrEditor.Domain.DataBase;
+
 #pragma warning disable CS8618
 
 namespace UI;
@@ -17,17 +18,17 @@ public partial class MainForm : Form
     private Bitmap _currentSelectedImage;
     public static WorkService _service;
 
-    public DBReqs Assets = new DBReqs("assets");
-    public DBReqs Tools = new DBReqs("tools");
+    private readonly DBReqs _assets = new("assets");
+    private readonly DBReqs _tools = new("tools");
 
     
     private void ConfigurePanel()
     {
         _panel = new Panel();
-        _panel.Location = new Point(500, 100);
+        _panel.Location = new Point(300, 100);
         _panel.AllowDrop = true;
-        _panel.Size = new Size(800, 600);
-        _panel.BackgroundImage = Assets.ParsedDBInfo["land"];
+        _panel.Size = new Size(1200, 600);
+        _panel.BackgroundImage = _assets.ParsedDBInfo["land"];
         _panel.DragOver += Drag_Over!;
         _panel.DragDrop += Drag_Drop!;
         _panel.DragEnter += Drag_Enter!;
@@ -50,12 +51,12 @@ public partial class MainForm : Form
 
     private void ConfigureToolButtons()
     {
-        Controls.Add(new ToolButton(new Rectangle(200, 20, 50, 50), Tools.ParsedDBInfo["eraser"], ToolType.Eraser));
-        Controls.Add(new ToolButton(new Rectangle(250, 20, 50, 50), Tools.ParsedDBInfo["brush"], ToolType.Brush));
-        Controls.Add(new ToolButton(new Rectangle(300, 20, 50, 50), Tools.ParsedDBInfo["pipka"], ToolType.Pipette));
-        Controls.Add(new ToolButton(new Rectangle(350, 20, 50, 50), Tools.ParsedDBInfo["trans"], ToolType.Turner));
-        Controls.Add(new ToolButton(new Rectangle(400, 20, 50, 50), Tools.ParsedDBInfo["zoom"], ToolType.Zoom));
-        Controls.Add(new ToolButton(new Rectangle(450, 20, 50, 50), Tools.ParsedDBInfo["scale"], ToolType.None));
+        Controls.Add(new ToolButton(new Rectangle(200, 20, 50, 50), _tools.ParsedDBInfo["eraser"], ToolType.Eraser));
+        Controls.Add(new ToolButton(new Rectangle(250, 20, 50, 50), _tools.ParsedDBInfo["brush"], ToolType.Brush));
+        Controls.Add(new ToolButton(new Rectangle(300, 20, 50, 50), _tools.ParsedDBInfo["pipka"], ToolType.Pipette));
+        Controls.Add(new ToolButton(new Rectangle(350, 20, 50, 50), _tools.ParsedDBInfo["trans"], ToolType.Turner));
+        Controls.Add(new ToolButton(new Rectangle(400, 20, 50, 50), _tools.ParsedDBInfo["zoom"], ToolType.Zoom));
+        Controls.Add(new ToolButton(new Rectangle(450, 20, 50, 50), _tools.ParsedDBInfo["scale"], ToolType.None));
     }
 
     private void ConfigureChangeBackgroundButton()
@@ -75,6 +76,7 @@ public partial class MainForm : Form
 
     public MainForm(WorkService service)
     {
+        Text = @"Landscape Editor";
         WindowState = FormWindowState.Maximized;
         _service = service;
         BackColor = Color.Azure;

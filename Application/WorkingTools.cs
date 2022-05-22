@@ -5,8 +5,8 @@ namespace TerrEditor.Application;
 
 public class WorkingTools //singleton
 {
-    private static WorkingTools _instance;
-    private Dictionary<ToolType, ITool> _tools = new();
+    private static WorkingTools _instance = null!;
+    private readonly Dictionary<ToolType, ITool> _tools = new();
 
     private WorkingTools()
     {
@@ -19,6 +19,7 @@ public class WorkingTools //singleton
     
     public static WorkingTools GetInstance()
     {
+        // ReSharper disable once ConditionIsAlwaysTrueOrFalse
         if (_instance == null)
             _instance = new WorkingTools();
         return _instance;
