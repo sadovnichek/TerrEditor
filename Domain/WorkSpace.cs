@@ -4,21 +4,13 @@ using TerrEditor.Domain.Tools;
 
 namespace TerrEditor.Domain;
 
-public class WorkSpace // singleton
+public class WorkSpace : IWorkSpace
 {
     private List<Item> _objects;
-    private static WorkSpace _instance;
 
-    private WorkSpace()
+    public WorkSpace()
     {
         _objects = new List<Item>();
-    }
-
-    public static WorkSpace GetInstance()
-    {
-        if (_instance is null)
-            _instance = new WorkSpace();
-        return _instance;
     }
 
     public void Add(Item item)

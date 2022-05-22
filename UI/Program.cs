@@ -13,25 +13,17 @@ static class Program
         Application.EnableVisualStyles();
         Application.SetCompatibleTextRenderingDefault(false);
         ApplicationConfiguration.Initialize();
-
         var services = new ServiceCollection();
         ConfigureServices(services);
-        using (var serviceProvider = services.BuildServiceProvider())
-        {
-            var form = serviceProvider.GetRequiredService<MainForm>();
-            Application.Run(form);
-        }
-        
-        //var workSpace = WorkSpace.GetInstance();
-        //var workingPlace = new WorkService(workSpace);
-        //var form = new MainForm(workingPlace);
-        //Application.Run(form);
+        using var serviceProvider = services.BuildServiceProvider();
+        var form = serviceProvider.GetRequiredService<MainForm>();
+        Application.Run(form);
     }
 
     private static void ConfigureServices(ServiceCollection services)
     {
-        services.AddScoped<MainForm>();
         services.AddSingleton<IWorkSpace, WorkSpace>();
         services.AddSingleton<IWorkService, WorkService>();
+        services.AddScoped<MainForm>();
     }
 }

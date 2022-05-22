@@ -5,6 +5,7 @@ using TerrEditor.Domain.Tools;
 using UI.Buttons;
 using MySql.Data.MySqlClient;
 using ImagesInteraction;
+using TerrEditor.Domain;
 using TerrEditor.Domain.DataBase;
 
 #pragma warning disable CS8618
@@ -74,11 +75,11 @@ public partial class MainForm : Form
         Controls.Add(changeBackgroundButton);
     }
 
-    public MainForm(WorkService service)
+    public MainForm(IWorkService service)
     {
         Text = @"Landscape Editor";
         WindowState = FormWindowState.Maximized;
-        _service = service;
+        _service = service as WorkService;
         BackColor = Color.Azure;
         InitializeComponent();
         ConfigurePanel();

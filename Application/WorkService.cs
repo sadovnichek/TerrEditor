@@ -4,7 +4,7 @@ using TerrEditor.Domain.Tools;
 
 namespace TerrEditor.Application;
 
-public class WorkService
+public class WorkService : IWorkService
 {
     private readonly WorkingTools _tools;
     private ITool _currentTool;
@@ -12,10 +12,10 @@ public class WorkService
     private WorkSpace _workSpace;
     public ToolType CurrentToolType;
     
-    public WorkService(WorkSpace workSpace)
+    public WorkService(IWorkSpace workSpace)
     {
         _tools = WorkingTools.GetInstance();
-        _workSpace = workSpace;
+        _workSpace = workSpace as WorkSpace;
     }
 
     public void SetItem(Item item)
