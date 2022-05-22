@@ -12,9 +12,9 @@ public class WorkService : IWorkService
     private WorkSpace _workSpace;
     public ToolType CurrentToolType;
     
-    public WorkService(IWorkSpace workSpace)
+    public WorkService(IWorkSpace workSpace, IWorkingTools tools)
     {
-        _tools = WorkingTools.GetInstance();
+        _tools = tools as WorkingTools;
         _workSpace = workSpace as WorkSpace;
     }
 

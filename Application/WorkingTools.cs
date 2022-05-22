@@ -3,12 +3,11 @@ using TerrEditor.Domain.Tools;
 
 namespace TerrEditor.Application;
 
-public class WorkingTools //singleton
+public class WorkingTools : IWorkingTools
 {
-    private static WorkingTools _instance = null!;
     private readonly Dictionary<ToolType, ITool> _tools = new();
 
-    private WorkingTools()
+    public WorkingTools()
     {
         _tools.Add(ToolType.Eraser, Eraser.GetInstance());
         _tools.Add(ToolType.Highlighter, new Highlight());
@@ -17,14 +16,6 @@ public class WorkingTools //singleton
         _tools.Add(ToolType.Zoom ,new Zoom());
     }
     
-    public static WorkingTools GetInstance()
-    {
-        // ReSharper disable once ConditionIsAlwaysTrueOrFalse
-        if (_instance == null)
-            _instance = new WorkingTools();
-        return _instance;
-    }
-
     public ITool GetTool(ToolType toolType)
     {
         return _tools[toolType];

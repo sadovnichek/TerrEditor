@@ -24,6 +24,7 @@ static class Program
     {
         services.AddSingleton<IWorkSpace, WorkSpace>();
         services.AddSingleton<IWorkService, WorkService>();
+        services.AddSingleton<IWorkingTools, WorkingTools>();
         services.AddScoped<MainForm>();
     }
 }

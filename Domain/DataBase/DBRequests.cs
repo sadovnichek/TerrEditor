@@ -19,7 +19,7 @@ namespace TerrEditor.Domain.DataBase
             _dBConn.Open();
             _name = name;
             _dbSize = getDBSize();
-            ParseInfoFromDB();
+            ParseInfoFromDb();
             _dBConn.Close();
         }
 
@@ -30,20 +30,19 @@ namespace TerrEditor.Domain.DataBase
             return (long)resp.ExecuteScalar();
         }
 
-        private void ParseInfoFromDB()
+        private void ParseInfoFromDb()
         {
-            for (var id = 1; id <= this._dbSize; id++)
+            for (var id = 1; id <= _dbSize; id++)
             {
-                string request = $"SELECT image, name FROM {this._name} WHERE id = {id}";
+                string request = $"SELECT image, name FROM {_name} WHERE id = {id}";
                 MySqlCommand resp = new MySqlCommand(request, _dBConn);
                 MySqlDataReader datareader = resp.ExecuteReader();
                 while(datareader.Read())
                 {
                     var name = datareader["name"].ToString();
                     var bImage = (byte[])datareader["image"];
-
                     var image = new Bitmap(Image.FromStream(new MemoryStream(bImage)));
-                    image = (Bitmap)ImagesMethod.ResizeImage(image, new Size(100, 100)); //ÓÁÐÀÒÜ
+                    //image = (Bitmap)ImagesMethod.ResizeImage(image, new Size(100, 100)); //ÓÁÐÀÒÜ
                     _parsedDbInfo[name] = image;
                 }
                 datareader.Close();
