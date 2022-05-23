@@ -18,10 +18,11 @@ public partial class MainForm : Form
     private Rectangle _dragBoxFromMouseDown;
     private Bitmap _currentSelectedImage;
     public static WorkService _service;
+    
 
     private readonly DBReqs _assets = new("assets");
     private readonly DBReqs _tools = new("tools");
-
+    private readonly DBReqs _backs = new("background");
     
     private void ConfigurePanel()
     {
@@ -268,7 +269,10 @@ public partial class MainForm : Form
 
     private  IEnumerable<Image> GetBackgroundImages()
     {
-        yield return _tools.ParsedDBInfo["back1"];
+        yield return _backs.ParsedDBInfo["back1"];
+        yield return _backs.ParsedDBInfo["back2"];
+        yield return _backs.ParsedDBInfo["back3"];
+        
         
     }
     
