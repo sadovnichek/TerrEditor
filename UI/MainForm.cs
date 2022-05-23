@@ -43,19 +43,29 @@ public partial class MainForm : Form
         {
             foreach (var a in _panel.Controls)
             {
-                if (a is not PictureBox item) continue;
-                item.Size=new Size(item.Width+20, item.Height+20);
+                
+                if (a is not ItemPictureBox item) continue;
+                item.Size=new Size(item.Width+5, item.Height+5);
                 item.Image = item.Image.Resize(item.Size);
 
             }
-            _panel.MaximumSize = new Size(_panel.Width+20, _panel.Height+20);
+            
             _panel.Size = new Size(_panel.Width+20, _panel.Height+20);
         }
         
         else
         {
+            foreach (var a in _panel.Controls)
+            {
+                
+                if (a is not ItemPictureBox item) continue;
+                if (item.Size.Width <= 20 || item.Size.Height <= 20) break;
+                item.Size=new Size(item.Width-5, item.Height-5);
+                item.Image = item.Image.Resize(item.Size);
+
+            }
             if (_panel.Size.Width <= 100 || _panel.Size.Height <= 100) return;
-            _panel.MaximumSize = new Size(_panel.Width-20, _panel.Height-20);
+            
             _panel.Size = new Size(_panel.Width-20, _panel.Height-20);
 
         }
@@ -256,13 +266,10 @@ public partial class MainForm : Form
         call++;
     }
 
-    private static IEnumerable<Image> GetBackgroundImages()
+    private  IEnumerable<Image> GetBackgroundImages()
     {
-        yield return Image.FromFile("./wooden.jpeg");
-        yield return Image.FromFile("./dessert.jpg");
-        yield return Image.FromFile("./forest.jpg");
-        yield return Image.FromFile("./stones.jpeg");
-        yield return Image.FromFile("./land.jpg");
+        yield return _tools.ParsedDBInfo["back1"];
+        
     }
     
     private Bitmap RotateImage(Bitmap bmp,Point location) {
