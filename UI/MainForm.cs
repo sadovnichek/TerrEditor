@@ -7,7 +7,7 @@ using MySql.Data.MySqlClient;
 using TerrEditor.Domain;
 using TerrEditor.Domain.DataBase;
 using TerrEditor.Infrastructure;
-
+using System.Drawing;
 #pragma warning disable CS8618
 
 namespace UI;
@@ -31,10 +31,36 @@ public partial class MainForm : Form
         _panel.Size = new Size(1200, 600);
         _panel.BackgroundImage = _assets.ParsedDBInfo["land"];
         _panel.DragOver += Drag_Over!;
+        _panel.MouseWheel += Clicked;
         _panel.DragDrop += Drag_Drop!;
         _panel.DragEnter += Drag_Enter!;
         Controls.Add(_panel);
     }
+
+    private void Clicked(object? sender, MouseEventArgs e)
+    {
+        if (e.Delta > 0)
+        {
+            foreach (var a in _panel.Controls)
+            {
+                if (a is not PictureBox item) continue;
+                item.Size=new Size(item.Width+20, item.Height+20);
+                item.Image = item.Image.Resize(item.Size);
+
+            }
+            _panel.MaximumSize = new Size(_panel.Width+20, _panel.Height+20);
+            _panel.Size = new Size(_panel.Width+20, _panel.Height+20);
+        }
+        
+        else
+        {
+            if (_panel.Size.Width <= 100 || _panel.Size.Height <= 100) return;
+            _panel.MaximumSize = new Size(_panel.Width-20, _panel.Height-20);
+            _panel.Size = new Size(_panel.Width-20, _panel.Height-20);
+
+        }
+    }
+
 
     private void SetLabels()
     {
@@ -162,7 +188,7 @@ public partial class MainForm : Form
         temp.MouseDown += Mouse_Down!;
         temp.MouseUp += Mouse_Up!;
         temp.MouseMove += Move_Mouse!;
-        temp.Click += OnPictureBoxClick;
+        temp.MouseClick += OnPictureBoxClick;
         return temp;
     }
 
@@ -174,7 +200,7 @@ public partial class MainForm : Form
         }
     }
 
-    private void OnPictureBoxClick(object sender, EventArgs eventArgs)
+    private void OnPictureBoxClick(object sender, MouseEventArgs eventArgs)
     {
         if (sender is not ItemPictureBox pictureBox) 
             return;
@@ -190,6 +216,10 @@ public partial class MainForm : Form
             }
             case ToolType.Zoom:
             {
+                if ((eventArgs.Button & MouseButtons.Left) != 0)
+                    Zoom.delta = 40;
+                else if ((eventArgs.Button & MouseButtons.Right) != 0)
+                    Zoom.delta = -40;
                 pictureBox.Size = _service.DoAction().Size;
                 pictureBox.Image = pictureBox.Image.Resize(pictureBox.Size);
                 break;
