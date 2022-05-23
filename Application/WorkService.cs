@@ -1,5 +1,4 @@
 ﻿using TerrEditor.Domain;
-using TerrEditor.Domain.Items;
 using TerrEditor.Domain.Tools;
 
 namespace TerrEditor.Application;
@@ -9,13 +8,11 @@ public class WorkService : IWorkService
     private readonly WorkingTools _tools;
     private ITool _currentTool;
     private Item _currentItem;
-    public WorkSpace workSpace;
     public ToolType CurrentToolType;
     
-    public WorkService(IWorkSpace workSpace, IWorkingTools tools)
+    public WorkService(IWorkingTools tools)
     {
         _tools = tools as WorkingTools;
-        this.workSpace = workSpace as WorkSpace;
     }
 
     public void SetItem(Item item)

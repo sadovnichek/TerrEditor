@@ -16,12 +16,8 @@ public sealed class ToolButton : UserButton
 
     private void ToolHandler(object? sender, EventArgs e)
     {
-        BackColor = (BackColor == Color.White) ? Color.Fuchsia : Color.White;
-        Image = (BackColor == Color.Fuchsia)
-            ? Image.Resize(new Size(Image.Width - 15, Image.Height - 15))
-            : Image.Resize(new Size(Image.Width + 15, Image.Height + 15));
         MainForm._service.CurrentToolType = (MainForm._service.CurrentToolType != currentToolType)
-            ? currentToolType : ToolType.None;
+                 ? currentToolType : ToolType.None;
     }
 }
 

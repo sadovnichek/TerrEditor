@@ -1,6 +1,4 @@
-﻿using TerrEditor.Domain.Items;
-
-namespace TerrEditor.Domain;
+﻿namespace TerrEditor.Domain;
 
 public interface IWorkSpace
 {

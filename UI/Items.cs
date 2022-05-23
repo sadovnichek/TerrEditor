@@ -11,7 +11,7 @@ public partial class MainForm : Form
         {
             itemsPanel.Controls.Add(new ItemButton(new Rectangle(0, 120, 100, 100), 
                 value.Resize(new Size(75, 75)),
-                Mouse_Down!, Mouse_Up!, Move_Mouse!));
+                _mouseMethods.Mouse_Down!, _mouseMethods.Mouse_Up!, _mouseMethods.Move_Mouse!));
         }
     }
     

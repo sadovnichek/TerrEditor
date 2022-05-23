@@ -1,25 +1,21 @@
-﻿using System.Drawing;
-using TerrEditor.Domain.Items;
-using TerrEditor.Domain.Tools;
-
-namespace TerrEditor.Domain;
+﻿namespace TerrEditor.Domain;
 
 public class WorkSpace : IWorkSpace
 {
-    private List<Item> _objects;
+    public List<Item> Objects { get; }
 
     public WorkSpace()
     {
-        _objects = new List<Item>();
+        Objects = new List<Item>();
     }
 
     public void Add(Item item)
     {
-        _objects.Add(item);
+        Objects.Add(item);
     }
 
     public void Remove(Item item)
     {
-        _objects.Remove(item);
+        Objects.Remove(item);
     }
 }

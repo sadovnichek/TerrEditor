@@ -1,4 +1,4 @@
-﻿using TerrEditor.Domain.Items;
+﻿using TerrEditor.Domain;
 using Timer = System.Windows.Forms.Timer;
 
 namespace UI;
@@ -9,19 +9,27 @@ public sealed class ItemPictureBox : Control
     public Image Image { get; set; }
 
     public Item Item;
-
-    public ItemPictureBox()
+    public ItemPictureBox(Item item, IMouseMethods mouseMethods)
     {
-        Item = new Item(Location, Size);
+        Item = item;
+        Image = item.Image;
+        Width = item.Size.Width;
+        Height = item.Size.Height;
+        Location = item.Location;
         SetStyle(ControlStyles.SupportsTransparentBackColor, true);
         BackColor = Color.Transparent;
+        Visible = true;
+        MouseDown += mouseMethods.Mouse_Down!;
+        MouseUp += mouseMethods.Mouse_Up!;
+        MouseMove += mouseMethods.Move_Mouse!;
+        Click += MainForm.OnPictureBoxClick;
         _refresher = new Timer();
         _refresher.Tick += TimerOnTick!;
         _refresher.Interval = 10;
         _refresher.Enabled = true;
         _refresher.Start();
     }
-
+    
     protected override CreateParams CreateParams
     {
         get
