@@ -2,6 +2,7 @@
 
 namespace TerrEditor.Domain;
 
+[Serializable()]
 public class Item
 {
     public Guid Id => new Guid();

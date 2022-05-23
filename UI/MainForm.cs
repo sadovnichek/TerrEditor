@@ -2,7 +2,6 @@ using System.Drawing.Drawing2D;
 using TerrEditor.Application;
 using TerrEditor.Domain.Tools;
 using UI.Buttons;
-using MySql.Data.MySqlClient;
 using TerrEditor.Domain;
 using TerrEditor.Domain.DataBase;
 using TerrEditor.Infrastructure;
@@ -17,12 +16,15 @@ public partial class MainForm : Form
 {
     public static Panel _panel;
     public static WorkService _service; // почему static почему public?
-    private static WorkSpace _workSpace;
+    public static WorkSpace _workSpace;
     private MouseMethods _mouseMethods;
     private readonly DBReqs _assets = new("assets");
     private readonly DBReqs _tools = new("tools");
     private PanelEventRepository _panelEventRepository;
     private readonly Timer _refresher;
+    private Button saveButton;
+    private Button loadButton;
+    private SaveService serviceService;
     
     private void ConfigurePanel()
     {
@@ -87,7 +89,9 @@ public partial class MainForm : Form
 
     public MainForm(IWorkService service, 
         IWorkSpace workSpace, 
-        IMouseMethods mouseMethods, PanelEventRepository panelEventRepository)
+        IMouseMethods mouseMethods, 
+        PanelEventRepository panelEventRepository,
+        SaveService saveService)
     {
         _panelEventRepository = panelEventRepository;
         Text = @"Landscape Editor";
@@ -108,6 +112,22 @@ public partial class MainForm : Form
         _refresher.Interval = 10;
         _refresher.Enabled = true;
         _refresher.Start();
+        saveButton = new Button()
+        {
+            Location = new Point(1000, 10),
+            Size = new Size(100, 50),
+            Text = "Save",
+        };
+        loadButton = new Button()
+        {
+            Location = new Point(1000, 70),
+            Size = new Size(100, 50),
+            Text = "Load",
+        };
+        saveButton.Click += saveService.Serialize;
+        loadButton.Click += saveService.Deserialize;
+        Controls.Add(saveButton);
+        Controls.Add(loadButton);
     }
 
     public void UpdatePanel(object sender, EventArgs eventArgs)
@@ -117,7 +137,7 @@ public partial class MainForm : Form
             _panel.Controls.Clear();
             foreach (var obj in _workSpace.Objects)
             {
-                var mouseEvent = _panelEventRepository.Get();
+                _panelEventRepository.Get();
                 _panel.Controls.Add(new ItemPictureBox(obj, _mouseMethods));
             }
             _panel.Invalidate();
