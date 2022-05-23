@@ -4,9 +4,9 @@ using TerrEditor.Domain.Items;
 using TerrEditor.Domain.Tools;
 using UI.Buttons;
 using MySql.Data.MySqlClient;
-using ImagesInteraction;
 using TerrEditor.Domain;
 using TerrEditor.Domain.DataBase;
+using TerrEditor.Infrastructure;
 
 #pragma warning disable CS8618
 
@@ -191,7 +191,7 @@ public partial class MainForm : Form
             case ToolType.Zoom:
             {
                 pictureBox.Size = _service.DoAction().Size;
-                pictureBox.Image = ImagesMethod.ResizeImage(pictureBox.Image, pictureBox.Size);
+                pictureBox.Image = pictureBox.Image.ResizeImage(pictureBox.Size);
                 break;
             }
             case ToolType.Turner:

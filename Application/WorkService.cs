@@ -9,13 +9,13 @@ public class WorkService : IWorkService
     private readonly WorkingTools _tools;
     private ITool _currentTool;
     private Item _currentItem;
-    private WorkSpace _workSpace;
+    public WorkSpace workSpace;
     public ToolType CurrentToolType;
     
     public WorkService(IWorkSpace workSpace, IWorkingTools tools)
     {
         _tools = tools as WorkingTools;
-        _workSpace = workSpace as WorkSpace;
+        this.workSpace = workSpace as WorkSpace;
     }
 
     public void SetItem(Item item)

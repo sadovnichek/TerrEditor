@@ -1,5 +1,4 @@
 using System.Drawing;
-using ImagesInteraction;
 using MySql.Data.MySqlClient;
 
 namespace TerrEditor.Domain.DataBase

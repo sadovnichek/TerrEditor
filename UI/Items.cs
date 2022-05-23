@@ -1,4 +1,4 @@
-﻿using ImagesInteraction;
+﻿using TerrEditor.Infrastructure;
 using UI.Buttons;
 
 namespace UI;
@@ -10,7 +10,7 @@ public partial class MainForm : Form
         foreach (var value in _assets.ParsedDBInfo.Values)
         {
             itemsPanel.Controls.Add(new ItemButton(new Rectangle(0, 120, 100, 100), 
-                ImagesMethod.ResizeImage(value, new Size(75, 75)),
+                value.ResizeImage(new Size(75, 75)),
                 Mouse_Down!, Mouse_Up!, Move_Mouse!));
         }
     }
