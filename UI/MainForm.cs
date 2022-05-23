@@ -191,7 +191,7 @@ public partial class MainForm : Form
             case ToolType.Zoom:
             {
                 pictureBox.Size = _service.DoAction().Size;
-                pictureBox.Image = pictureBox.Image.ResizeImage(pictureBox.Size);
+                pictureBox.Image = pictureBox.Image.Resize(pictureBox.Size);
                 break;
             }
             case ToolType.Turner:

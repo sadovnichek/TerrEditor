@@ -10,7 +10,7 @@ public partial class MainForm : Form
         foreach (var value in _assets.ParsedDBInfo.Values)
         {
             itemsPanel.Controls.Add(new ItemButton(new Rectangle(0, 120, 100, 100), 
-                value.ResizeImage(new Size(75, 75)),
+                value.Resize(new Size(75, 75)),
                 Mouse_Down!, Mouse_Up!, Move_Mouse!));
         }
     }

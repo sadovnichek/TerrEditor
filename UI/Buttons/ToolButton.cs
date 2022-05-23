@@ -8,7 +8,7 @@ public sealed class ToolButton : UserButton
     
     public ToolButton(Rectangle geometry, Image image, ToolType toolType) : base(geometry, "")
     {
-        Image = Image.ResizeImage(geometry.Size);
+        Image = image.Resize(geometry.Size);
         BackColor = Color.White;
         currentToolType = toolType;
         Click += ToolHandler;
@@ -18,8 +18,8 @@ public sealed class ToolButton : UserButton
     {
         BackColor = (BackColor == Color.White) ? Color.Fuchsia : Color.White;
         Image = (BackColor == Color.Fuchsia)
-            ? Image.ResizeImage(new Size(Image.Width - 15, Image.Height - 15))
-            : Image.ResizeImage(new Size(Image.Width + 15, Image.Height + 15));
+            ? Image.Resize(new Size(Image.Width - 15, Image.Height - 15))
+            : Image.Resize(new Size(Image.Width + 15, Image.Height + 15));
         MainForm._service.CurrentToolType = (MainForm._service.CurrentToolType != currentToolType)
             ? currentToolType : ToolType.None;
     }
