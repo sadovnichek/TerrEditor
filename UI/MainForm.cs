@@ -8,26 +8,44 @@ using TerrEditor.Infrastructure;
 using UI.MouseEvent;
 using Timer = System.Windows.Forms.Timer;
 
-#pragma warning disable CS8618
-
 namespace UI;
 
-public partial class MainForm : Form
+public partial class MainForm
 {
     public static Panel _panel;
-    public static WorkService _service; // почему static почему public?
-    public static WorkSpace _workSpace;
+    private WorkService _workService;
     private MouseMethods _mouseMethods;
     private readonly DBReqs _assets = new("assets");
     private readonly DBReqs _tools = new("tools");
     private PanelEventRepository _panelEventRepository;
-    private readonly Timer _refresher;
-    private Button saveButton;
-    private Button loadButton;
-    private SaveService serviceService;
+    private SaveLoadService _saveLoadService;
+    
+    public MainForm(IWorkService service,
+        IMouseMethods mouseMethods, 
+        PanelEventRepository panelEventRepository,
+        SaveLoadService saveLoadService)
+    {
+        WindowState = FormWindowState.Maximized;
+        _panelEventRepository = panelEventRepository;
+        _workService = service as WorkService;
+        _mouseMethods = mouseMethods as MouseMethods;
+        _saveLoadService = saveLoadService;
+        InitializeComponent();
+        ConfigurePanel();
+        setSize();
+        SetLabels();
+        ConfigureItemButtons();
+        ConfigureToolButtons();
+        ConfigureSaveLoadButtons();
+    }
     
     private void ConfigurePanel()
     {
+        var refresher = new Timer();
+        refresher.Tick += UpdatePanel!;
+        refresher.Interval = 10;
+        refresher.Enabled = true;
+        refresher.Start();
         _panel = new Panel();
         _panel.Location = new Point(300, 100);
         _panel.AllowDrop = true;
@@ -79,112 +97,71 @@ public partial class MainForm : Form
 
     private void ConfigureToolButtons()
     {
-        Controls.Add(new ToolButton(new Rectangle(200, 20, 50, 50), _tools.ParsedDBInfo["eraser"], ToolType.Eraser));
-        Controls.Add(new ToolButton(new Rectangle(250, 20, 50, 50), _tools.ParsedDBInfo["brush"], ToolType.Brush));
-        Controls.Add(new ToolButton(new Rectangle(300, 20, 50, 50), _tools.ParsedDBInfo["pipka"], ToolType.Pipette));
-        Controls.Add(new ToolButton(new Rectangle(350, 20, 50, 50), _tools.ParsedDBInfo["trans"], ToolType.Turner));
-        Controls.Add(new ToolButton(new Rectangle(400, 20, 50, 50), _tools.ParsedDBInfo["zoom"], ToolType.Zoom));
-        Controls.Add(new ToolButton(new Rectangle(450, 20, 50, 50), _tools.ParsedDBInfo["scale"], ToolType.None));
+        Controls.Add(new ToolButton(new Rectangle(200, 20, 50, 50), _tools.ParsedDBInfo["eraser"], ToolType.Eraser,
+        _workService));
+        Controls.Add(new ToolButton(new Rectangle(250, 20, 50, 50), _tools.ParsedDBInfo["brush"], ToolType.Brush,
+            _workService));
+        Controls.Add(new ToolButton(new Rectangle(300, 20, 50, 50), _tools.ParsedDBInfo["pipka"], ToolType.Pipette,
+            _workService));
+        Controls.Add(new ToolButton(new Rectangle(350, 20, 50, 50), _tools.ParsedDBInfo["trans"], ToolType.Turner,
+            _workService));
+        Controls.Add(new ToolButton(new Rectangle(400, 20, 50, 50), _tools.ParsedDBInfo["zoom"], ToolType.Zoom,
+            _workService));
+        Controls.Add(new ToolButton(new Rectangle(450, 20, 50, 50), _tools.ParsedDBInfo["scale"], ToolType.None,
+            _workService));
     }
 
-    public MainForm(IWorkService service, 
-        IWorkSpace workSpace, 
-        IMouseMethods mouseMethods, 
-        PanelEventRepository panelEventRepository,
-        SaveService saveService)
+    private void ConfigureSaveLoadButtons()
     {
-        _panelEventRepository = panelEventRepository;
-        Text = @"Landscape Editor";
-        WindowState = FormWindowState.Maximized;
-        _service = service as WorkService;
-        _workSpace = workSpace as WorkSpace;
-        _mouseMethods = mouseMethods as MouseMethods;
-        BackColor = Color.Azure;
-        InitializeComponent();
-        ConfigurePanel();
-        setSize();
-        SetLabels();
-        ConfigureItemButtons();
-        ConfigureToolButtons();
-        
-        _refresher = new Timer();
-        _refresher.Tick += UpdatePanel!;
-        _refresher.Interval = 10;
-        _refresher.Enabled = true;
-        _refresher.Start();
-        saveButton = new Button()
+        var saveButton = new Button()
         {
             Location = new Point(1000, 10),
             Size = new Size(100, 50),
-            Text = "Save",
+            Text = @"Save",
         };
-        loadButton = new Button()
+        var loadButton = new Button()
         {
-            Location = new Point(1000, 70),
+            Location = new Point(1100, 10),
             Size = new Size(100, 50),
-            Text = "Load",
+            Text = @"Load",
         };
-        saveButton.Click += saveService.Serialize;
-        loadButton.Click += saveService.Deserialize;
+        saveButton.Click += _saveLoadService.Save;
+        loadButton.Click += _saveLoadService.Load;
         Controls.Add(saveButton);
         Controls.Add(loadButton);
     }
 
-    public void UpdatePanel(object sender, EventArgs eventArgs)
+    private void UpdatePanel(object sender, EventArgs eventArgs)
     {
         if (!_panelEventRepository.IsEmpty)
         {
-            _panel.Controls.Clear();
-            foreach (var obj in _workSpace.Objects)
+            var @event = _panelEventRepository.Get();
+            switch (@event.Type)
             {
-                _panelEventRepository.Get();
-                _panel.Controls.Add(new ItemPictureBox(obj, _mouseMethods));
+                case PanelEventType.Add:
+                {
+                    _panel.Controls.Add(new ItemPictureBox(@event.Item, _mouseMethods));
+                    break;
+                }
+                case PanelEventType.Remove:
+                {
+                    _panel.Controls.RemoveByKey(@event.Item.Id.ToString());
+                    break;
+                }
             }
-            _panel.Invalidate();
-        }
-    }
-    
-    public static void OnPictureBoxClick(object sender, EventArgs eventArgs)
-    {
-        if (sender is not ItemPictureBox pictureBox) 
-            return;
-        if (eventArgs is not MouseEventArgs mouseEventArgs) 
-            return;
-        _service.SetItem(new Item(pictureBox.Location, pictureBox.Size));
-        switch (_service.CurrentToolType)
-        {
-            case ToolType.Eraser:
-            {
-                _workSpace.Remove(pictureBox.Item);
-                break;
-            }
-            case ToolType.Zoom:
-            {
-                if ((mouseEventArgs.Button & MouseButtons.Left) != 0)
-                    Zoom.delta = 40;
-                else if ((mouseEventArgs.Button & MouseButtons.Right) != 0)
-                    Zoom.delta = -40;
-                pictureBox.Size = _service.DoAction().Size;
-                pictureBox.Image = pictureBox.Image.Resize(pictureBox.Size);
-                break;
-            }
-            case ToolType.Turner:
-            {
-                /*var image = RotateImage(new Bitmap(pictureBox.Image),_service.DoAction().Location);
-                var pb = CreatePictureBox(image);
-                _panel.Controls.Remove(pictureBox);
-                _panel.Controls.Add(pb);*/
-                break;
-            }
-            case ToolType.Brush:
-                break;
-            case ToolType.Pipette:
-                break;
-            case ToolType.Highlighter:
-                break;
         }
     }
 
+    private void ConfigureItemButtons()
+    {
+        foreach (var pair in _assets.ParsedDBInfo)
+        {
+            itemsPanel.Controls.Add(new ItemButton(new Rectangle(0, 120, 100, 100), 
+                pair.Value.Resize(new Size(75, 75)), pair.Key,
+                _mouseMethods.Mouse_Down!, _mouseMethods.Mouse_Up!, _mouseMethods.Move_Mouse!));
+        }
+    }
+    
     //УБРАТЬ!!!!
     private Bitmap RotateImage(Bitmap bmp,Point location) {
         Bitmap rotatedImage = new Bitmap(bmp.Width, bmp.Height);

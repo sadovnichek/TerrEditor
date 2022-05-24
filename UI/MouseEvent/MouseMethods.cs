@@ -1,4 +1,7 @@
-﻿using TerrEditor.Domain;
+﻿using TerrEditor.Application;
+using TerrEditor.Domain;
+using TerrEditor.Domain.Tools;
+using TerrEditor.Infrastructure;
 
 namespace UI.MouseEvent;
 
@@ -7,12 +10,12 @@ public class MouseMethods : IMouseMethods
     public Rectangle DragBoxFromMouseDown { get; private set; }
     public Image CurrentSelectedImage { get; private set; }
     private WorkSpace _workSpace;
-    private PanelEventRepository _panelEventRepository;
-    
-    public MouseMethods(IWorkSpace workSpace, PanelEventRepository panelEventRepository)
+    private WorkService _workService;
+
+    public MouseMethods(IWorkSpace workSpace, IWorkService service)
     {
         _workSpace = workSpace as WorkSpace;
-        _panelEventRepository = panelEventRepository;
+        _workService = service as WorkService;
     }
     
     public void Mouse_Down(object sender, MouseEventArgs e)
@@ -58,7 +61,6 @@ public class MouseMethods : IMouseMethods
                 if (DragBoxFromMouseDown != Rectangle.Empty && !DragBoxFromMouseDown.Contains(e.X, e.Y))
                 {
                     pictureBox.DoDragDrop(CurrentSelectedImage, DragDropEffects.All);
-                    _panelEventRepository.AddEvent(new PanelEvent(PanelEventType.Remove, pictureBox.Item));
                     _workSpace.Remove(pictureBox.Item);
                 }
                 break;
@@ -82,12 +84,51 @@ public class MouseMethods : IMouseMethods
                     Cursor.Position.Y - MainForm._panel.Location.Y - CurrentSelectedImage.Height / 2),
                 Size = new Size(CurrentSelectedImage.Width, CurrentSelectedImage.Height)
             };
-            _panelEventRepository.AddEvent(new PanelEvent(PanelEventType.Add, item));
             _workSpace.Add(item);
         }
     }
     public void Drag_Enter(object sender, DragEventArgs e)
     {
         e.Effect = DragDropEffects.None;
+    }
+    public void OnPictureBoxClick(object sender, EventArgs eventArgs)
+    {
+        if (sender is not ItemPictureBox pictureBox) 
+            return;
+        if (eventArgs is not MouseEventArgs mouseEventArgs) 
+            return;
+        _workService.SetItem(pictureBox.Item);
+        switch (_workService.CurrentToolType)
+        {
+            case ToolType.Eraser:
+            {
+                _workSpace.Remove(pictureBox.Item);
+                break;
+            }
+            case ToolType.Zoom:
+            {
+                if ((mouseEventArgs.Button & MouseButtons.Left) != 0)
+                    Zoom.delta = 40;
+                else if ((mouseEventArgs.Button & MouseButtons.Right) != 0)
+                    Zoom.delta = -40;
+                pictureBox.Size = _workService.DoAction().Size;
+                pictureBox.Image = pictureBox.Image.Resize(pictureBox.Size);
+                break;
+            }
+            case ToolType.Turner:
+            {
+                /*var image = RotateImage(new Bitmap(pictureBox.Image),_service.DoAction().Location);
+                var pb = CreatePictureBox(image);
+                _panel.Controls.Remove(pictureBox);
+                _panel.Controls.Add(pb);*/
+                break;
+            }
+            case ToolType.Brush:
+                break;
+            case ToolType.Pipette:
+                break;
+            case ToolType.Highlighter:
+                break;
+        }
     }
 }

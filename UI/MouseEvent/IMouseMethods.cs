@@ -8,4 +8,5 @@ public interface IMouseMethods
     void Drag_Over(object sender, DragEventArgs e);
     void Drag_Drop(object sender, DragEventArgs e);
     void Drag_Enter(object sender, DragEventArgs e);
+    void OnPictureBoxClick(object sender, EventArgs eventArgs);
 }

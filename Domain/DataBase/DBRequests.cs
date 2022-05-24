@@ -41,7 +41,6 @@ namespace TerrEditor.Domain.DataBase
                     var name = datareader["name"].ToString();
                     var bImage = (byte[])datareader["image"];
                     var image = new Bitmap(Image.FromStream(new MemoryStream(bImage)));
-                    //image = (Bitmap)ImagesMethod.ResizeImage(image, new Size(100, 100)); //”¡–¿“‹
                     _parsedDbInfo[name] = image;
                 }
                 datareader.Close();

@@ -12,6 +12,7 @@ public sealed class ItemPictureBox : Control
     public ItemPictureBox(Item item, IMouseMethods mouseMethods)
     {
         Item = item;
+        Name = item.Id.ToString();
         Image = item.Image;
         Width = item.Size.Width;
         Height = item.Size.Height;
@@ -22,7 +23,7 @@ public sealed class ItemPictureBox : Control
         MouseDown += mouseMethods.Mouse_Down!;
         MouseUp += mouseMethods.Mouse_Up!;
         MouseMove += mouseMethods.Move_Mouse!;
-        Click += MainForm.OnPictureBoxClick;
+        Click += mouseMethods.OnPictureBoxClick;
         _refresher = new Timer();
         _refresher.Tick += TimerOnTick!;
         _refresher.Interval = 10;

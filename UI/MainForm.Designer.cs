@@ -170,7 +170,6 @@ partial class MainForm
         this.ScrollBar.Name = "ScrollBar";
         this.ScrollBar.Size = new System.Drawing.Size(20, 515);
         this.ScrollBar.TabIndex = 1;
-        this.ScrollBar.Scroll += new ScrollEventHandler(this.ScrollBar_Scroll);
         // 
         // MainForm
         // 

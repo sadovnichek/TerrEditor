@@ -1,14 +1,18 @@
-﻿using TerrEditor.Domain.Tools;
+﻿using TerrEditor.Application;
+using TerrEditor.Domain;
+using TerrEditor.Domain.Tools;
 using TerrEditor.Infrastructure;
 
 namespace UI.Buttons;
 public sealed class ToolButton : UserButton
 {
     private ToolType currentToolType;
+    private WorkService _workService;
     
-    public ToolButton(Rectangle geometry, Image image, ToolType toolType) : base(geometry, "")
+    public ToolButton(Rectangle geometry, Image image, ToolType toolType, IWorkService workService) : base(geometry, "")
     {
         Image = image.Resize(geometry.Size);
+        _workService = workService as WorkService;
         BackColor = Color.White;
         currentToolType = toolType;
         Click += ToolHandler;
@@ -16,7 +20,7 @@ public sealed class ToolButton : UserButton
 
     private void ToolHandler(object? sender, EventArgs e)
     {
-        MainForm._service.CurrentToolType = (MainForm._service.CurrentToolType != currentToolType)
+        _workService.CurrentToolType = (_workService.CurrentToolType != currentToolType)
                  ? currentToolType : ToolType.None;
     }
 }

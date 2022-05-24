@@ -28,7 +28,7 @@ internal static class Program
         services.AddSingleton<IWorkingTools, WorkingTools>();
         services.AddSingleton<IMouseMethods, MouseMethods>();
         services.AddSingleton<PanelEventRepository>();
-        services.AddSingleton<SaveService>();
+        services.AddSingleton<SaveLoadService>();
         services.AddScoped<MainForm>();
     }
 }
