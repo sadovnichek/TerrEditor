@@ -1,16 +1,34 @@
+using TerrEditor.Application;
+using TerrEditor.Domain;
+using Microsoft.Extensions.DependencyInjection;
+using UI.MouseEvent;
+
 namespace UI;
 
-static class Program
+internal static class Program
 {
-    /// <summary>
-    ///  The main entry point for the application.
-    /// </summary>
     [STAThread]
-    static void Main()
+    private static void Main()
     {
-        // To customize application configuration such as set high DPI settings or default font,
-        // see https://aka.ms/applicationconfiguration.
+        Application.SetHighDpiMode(HighDpiMode.SystemAware);
+        Application.EnableVisualStyles();
+        Application.SetCompatibleTextRenderingDefault(false);
         ApplicationConfiguration.Initialize();
-        Application.Run(new MainForm());
+        var services = new ServiceCollection();
+        ConfigureServices(services);
+        using var serviceProvider = services.BuildServiceProvider();
+        var form = serviceProvider.GetRequiredService<MainForm>();
+        Application.Run(form);
+    }
+
+    private static void ConfigureServices(IServiceCollection services)
+    {
+        services.AddSingleton<IWorkSpace, WorkSpace>();
+        services.AddSingleton<IWorkService, WorkService>();
+        services.AddSingleton<IWorkingTools, WorkingTools>();
+        services.AddSingleton<IMouseMethods, MouseMethods>();
+        services.AddSingleton<PanelEventRepository>();
+        services.AddSingleton<SaveLoadService>();
+        services.AddScoped<MainForm>();
     }
 }

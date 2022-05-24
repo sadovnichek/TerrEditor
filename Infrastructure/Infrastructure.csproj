@@ -7,4 +7,9 @@
         <RootNamespace>TerrEditor.Infrastructure</RootNamespace>
     </PropertyGroup>
 
+    <ItemGroup>
+      <PackageReference Include="Newtonsoft.Json" Version="13.0.2-beta1" />
+      <PackageReference Include="System.Drawing.Common" Version="7.0.0-preview.2.22152.2" />
+    </ItemGroup>
+
 </Project>
