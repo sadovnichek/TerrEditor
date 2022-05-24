@@ -17,6 +17,7 @@ public partial class MainForm
     private MouseMethods _mouseMethods;
     private readonly DBReqs _assets = new("assets");
     private readonly DBReqs _tools = new("tools");
+    private readonly DBReqs _backs = new("background");
     private PanelEventRepository _panelEventRepository;
     private SaveLoadService _saveLoadService;
     
@@ -37,6 +38,7 @@ public partial class MainForm
         ConfigureItemButtons();
         ConfigureToolButtons();
         ConfigureSaveLoadButtons();
+        ConfigureChangeBackgroundButton();
     }
     
     private void ConfigurePanel()
@@ -50,7 +52,7 @@ public partial class MainForm
         _panel.Location = new Point(300, 100);
         _panel.AllowDrop = true;
         _panel.Size = new Size(1200, 600);
-        _panel.BackgroundImage = _assets.ParsedDBInfo["land"];
+        _panel.BackgroundImage = _backs.ParsedDBInfo["backMain"];
         _panel.DragOver += _mouseMethods.Drag_Over!;
         _panel.DragDrop += _mouseMethods.Drag_Drop!;
         _panel.DragEnter += _mouseMethods.Drag_Enter!;
@@ -58,24 +60,67 @@ public partial class MainForm
         Controls.Add(_panel);
     }
 
+    private void ConfigureChangeBackgroundButton()
+    {
+        var changeBackgroundButton = new Button
+        {
+            Location = new Point(1650, 10),
+            Text = @"Change background",
+            Size = new Size(130, 70),
+            BackColor = Color.White
+        };
+        changeBackgroundButton.MouseEnter += (_, _) => changeBackgroundButton.BackColor = Color.CornflowerBlue;
+        changeBackgroundButton.MouseLeave += (_, _) => changeBackgroundButton.BackColor = Color.White;
+        changeBackgroundButton.Click += ChangeBackground!;
+        Controls.Add(changeBackgroundButton);
+    }
+    
+    private static int call = 0;
+
+    private void ChangeBackground(object sender, EventArgs e)
+    {
+        var backgrounds = GetBackgroundImages().ToArray();
+        _panel.BackgroundImage = backgrounds.ToArray()[call % backgrounds.Length];
+        call++;
+    }
+
+    private IEnumerable<Image> GetBackgroundImages()
+    {
+        yield return _backs.ParsedDBInfo["back1"];
+        yield return _backs.ParsedDBInfo["back2"];
+        yield return _backs.ParsedDBInfo["back3"];
+        yield return _backs.ParsedDBInfo["backMain"];
+    }
+    
     private void Clicked(object? sender, MouseEventArgs e)
     {
         if (e.Delta > 0)
         {
             foreach (var a in _panel.Controls)
             {
+                
+                if (a is not ItemPictureBox item) continue;
+                item.Size=new Size(item.Width+5, item.Height+5);
+                item.Image = item.Image.Resize(item.Size);
 
-                var item = (PictureBox)a;
-                item.Size=new Size(item.Width+20, item.Height+20);
             }
-            _panel.MaximumSize = new Size(_panel.Width+20, _panel.Height+20);
+            
             _panel.Size = new Size(_panel.Width+20, _panel.Height+20);
         }
-
+        
         else
         {
+            foreach (var a in _panel.Controls)
+            {
+                
+                if (a is not ItemPictureBox item) continue;
+                if (item.Size.Width <= 20 || item.Size.Height <= 20) break;
+                item.Size=new Size(item.Width-5, item.Height-5);
+                item.Image = item.Image.Resize(item.Size);
+
+            }
             if (_panel.Size.Width <= 100 || _panel.Size.Height <= 100) return;
-            _panel.MaximumSize = new Size(_panel.Width-20, _panel.Height-20);
+            
             _panel.Size = new Size(_panel.Width-20, _panel.Height-20);
 
         }
@@ -84,11 +129,15 @@ public partial class MainForm
     private void SetLabels()
     {
         var itemsLabel = new Label();
+        itemsLabel.Size = new Size(100, 50);
         itemsLabel.Location = new Point(0, 0);
         itemsLabel.Text = @"items";
+        itemsLabel.Font = new Font(FontFamily.GenericSansSerif, 18);
 
         var toolsLabel = new Label();
-        toolsLabel.Location = new Point(200, 0);
+        toolsLabel.Size = new Size(100, 50);
+        toolsLabel.Location = new Point(300, 0);
+        toolsLabel.Font = new Font(FontFamily.GenericSansSerif, 18);
         toolsLabel.Text = @"tools";
 
         Controls.Add(itemsLabel);
@@ -97,17 +146,9 @@ public partial class MainForm
 
     private void ConfigureToolButtons()
     {
-        Controls.Add(new ToolButton(new Rectangle(200, 20, 50, 50), _tools.ParsedDBInfo["eraser"], ToolType.Eraser,
+        Controls.Add(new ToolButton(new Rectangle(300, 50, 50, 50), _tools.ParsedDBInfo["eraser"], ToolType.Eraser,
         _workService));
-        Controls.Add(new ToolButton(new Rectangle(250, 20, 50, 50), _tools.ParsedDBInfo["brush"], ToolType.Brush,
-            _workService));
-        Controls.Add(new ToolButton(new Rectangle(300, 20, 50, 50), _tools.ParsedDBInfo["pipka"], ToolType.Pipette,
-            _workService));
-        Controls.Add(new ToolButton(new Rectangle(350, 20, 50, 50), _tools.ParsedDBInfo["trans"], ToolType.Turner,
-            _workService));
-        Controls.Add(new ToolButton(new Rectangle(400, 20, 50, 50), _tools.ParsedDBInfo["zoom"], ToolType.Zoom,
-            _workService));
-        Controls.Add(new ToolButton(new Rectangle(450, 20, 50, 50), _tools.ParsedDBInfo["scale"], ToolType.None,
+        Controls.Add(new ToolButton(new Rectangle(350, 50, 50, 50), _tools.ParsedDBInfo["zoom"], ToolType.Zoom,
             _workService));
     }
 
@@ -160,18 +201,5 @@ public partial class MainForm
                 pair.Value.Resize(new Size(75, 75)), pair.Key,
                 _mouseMethods.Mouse_Down!, _mouseMethods.Mouse_Up!, _mouseMethods.Move_Mouse!));
         }
-    }
-    
-    //УБРАТЬ!!!!
-    private Bitmap RotateImage(Bitmap bmp,Point location) {
-        Bitmap rotatedImage = new Bitmap(bmp.Width, bmp.Height);
-        rotatedImage.SetResolution(bmp.HorizontalResolution, bmp.VerticalResolution);
-        using Graphics g = Graphics.FromImage(rotatedImage);
-        g.InterpolationMode = InterpolationMode.HighQualityBicubic;
-        g.TranslateTransform(location.X,location.Y);
-        g.RotateTransform(30);
-        g.TranslateTransform(-location.X, - location.Y);
-        g.DrawImage(bmp, new Point(0, 0));
-        return rotatedImage;
     }
 }

@@ -45,7 +45,6 @@ partial class MainForm
         this.ColorRed = new System.Windows.Forms.Button();
         this.ColorBlack = new System.Windows.Forms.Button();
         this.itemsPanel = new System.Windows.Forms.FlowLayoutPanel();
-        this.ScrollBar = new System.Windows.Forms.VScrollBar();
         ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
         this.panel1.SuspendLayout();
         this.panel2.SuspendLayout();
@@ -159,18 +158,11 @@ partial class MainForm
         // itemsPanel
         //
         this.itemsPanel.BackColor = SystemColors.ControlLight;
-        this.itemsPanel.Location = new System.Drawing.Point(4, 20);
+        this.itemsPanel.AutoScroll = true;
+        this.itemsPanel.Location = new System.Drawing.Point(0, 50);
         this.itemsPanel.Name = "itemsPanel";
         this.itemsPanel.Size = new System.Drawing.Size(132, 515);
         this.itemsPanel.TabIndex = 0;
-        //
-        // ScrollBar
-        //
-        this.ScrollBar.Location = new System.Drawing.Point(140, 24);
-        this.ScrollBar.Name = "ScrollBar";
-        this.ScrollBar.Size = new System.Drawing.Size(20, 515);
-        this.ScrollBar.TabIndex = 1;
-        // 
         // MainForm
         // 
         this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -179,7 +171,6 @@ partial class MainForm
         this.Controls.Add(this.panel1);
         this.Controls.Add(this.pictureBox1);
         this.Controls.Add(this.itemsPanel);
-        this.Controls.Add(this.ScrollBar);
         this.Name = "MainForm";
         this.Text = "Form1";
         this.Load += new System.EventHandler(this.MainForm_Load);
@@ -201,6 +192,5 @@ partial class MainForm
     private Button ColorRed;
     private Button ColorBlack;
     private Panel panel2;
-    private VScrollBar ScrollBar;
     private FlowLayoutPanel itemsPanel;
 }
