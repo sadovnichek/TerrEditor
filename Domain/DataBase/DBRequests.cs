@@ -8,7 +8,7 @@ namespace TerrEditor.Domain.DataBase
         private readonly string _name;
         private readonly long _dbSize;
         private Dictionary<string, Bitmap> _parsedDbInfo = new();
-        private readonly MySqlConnection _dBConn = DBUtils.GetDBConnection();
+        private readonly MySqlConnection _dBConn = new DBUtils().GetDBConnection();
         private readonly Size _requiredSize;
 
         public Dictionary<string, Bitmap> ParsedDBInfo { get { return this._parsedDbInfo; } private set { this._parsedDbInfo = value; } }

@@ -9,7 +9,7 @@ public class DatabaseCore
     private  long _dbSize;
     private string _name;
     private readonly Dictionary<string, Bitmap> _parsedDbInfo=new();
-    private  MySqlConnection _dBConn=DBUtils.GetDBConnection();
+    private MySqlConnection _dBConn;
     
     
 
@@ -26,7 +26,7 @@ public class DatabaseCore
     public Dictionary<string, Bitmap> ParseInfoFromDB()
     {
         
-        _dBConn = DBUtils.GetDBConnection();
+        _dBConn = new DBUtils().GetDBConnection();
         _dBConn.Open();
         _dbSize = getDBSize();
         for (var id = 1; id <= _dbSize; id++)
