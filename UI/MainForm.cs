@@ -4,6 +4,7 @@ using TerrEditor.Domain.Tools;
 using UI.Buttons;
 using TerrEditor.Domain;
 using TerrEditor.Domain.DataBase;
+using TerrEditor.Domain.DBRepo;
 using TerrEditor.Infrastructure;
 using UI.MouseEvent;
 using Timer = System.Windows.Forms.Timer;
@@ -15,9 +16,9 @@ public partial class MainForm
     public static Panel _panel;
     private WorkService _workService;
     private MouseMethods _mouseMethods;
-    private readonly DBReqs _assets = new("assets");
-    private readonly DBReqs _tools = new("tools");
-    private readonly DBReqs _backs = new("background");
+    private readonly BitmapRepository _assets = new(new("assets"));
+    private readonly BitmapRepository _tools = new(new("tools"));
+    private readonly BitmapRepository _backs = new(new("background"));
     private PanelEventRepository _panelEventRepository;
     private SaveLoadService _saveLoadService;
     
@@ -32,6 +33,9 @@ public partial class MainForm
         _mouseMethods = mouseMethods as MouseMethods;
         _saveLoadService = saveLoadService;
         InitializeComponent();
+        _assets.GetImages();
+        _tools.GetImages();
+        _backs.GetImages();
         ConfigurePanel();
         setSize();
         SetLabels();
@@ -39,6 +43,7 @@ public partial class MainForm
         ConfigureToolButtons();
         ConfigureSaveLoadButtons();
         ConfigureChangeBackgroundButton();
+        
     }
     
     private void ConfigurePanel()
