@@ -123,6 +123,15 @@ public class MouseMethods : IMouseMethods
                 _panel.Controls.Add(pb);*/
                 break;
             }
+            case ToolType.Flipper:
+            {
+                pictureBox.Image.RotateFlip(RotateFlipType.RotateNoneFlipX);
+                var a = pictureBox.Location;
+                pictureBox.Location = new Point(a.X + 1, a.Y + 1);
+                pictureBox.Location = a;
+                pictureBox.Refresh();
+                break;
+            }
             case ToolType.Brush:
                 break;
             case ToolType.Pipette:

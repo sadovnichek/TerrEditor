@@ -8,5 +8,6 @@ public enum ToolType
     Brush,
     Eraser,
     Pipette,
-    Highlighter
+    Highlighter,
+    Flipper
 }
