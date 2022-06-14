@@ -153,7 +153,7 @@ public partial class MainForm
         _workService));
         Controls.Add(new ToolButton(new Rectangle(350, 50, 50, 50), _tools.ParsedDBInfo["zoom"], ToolType.Zoom,
             _workService));
-        Controls.Add(new ToolButton(new Rectangle(400, 50, 50, 50), _tools.ParsedDBInfo["eraser"], ToolType.Flipper,
+        Controls.Add(new ToolButton(new Rectangle(400, 50, 50, 50), _tools.ParsedDBInfo["trans"], ToolType.Turner,
             _workService));
     }
 

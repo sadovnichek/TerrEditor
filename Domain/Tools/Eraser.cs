@@ -1,25 +1,21 @@
 ﻿using System.Drawing;
+using UI.MouseEvent;
 
 namespace TerrEditor.Domain.Tools;
 
-public class Eraser : ITool // singleton
+public class Eraser : ITool
 {
     public string Name => "Eraser";
-    private static Eraser _instance;
-    private Eraser()
+    private PanelEventRepository _panelEventRepository;
+
+    public Eraser(PanelEventRepository panelEventRepository)
     {
-        
+        _panelEventRepository = panelEventRepository;
     }
 
-    public static Eraser GetInstance()
-    {
-        if (_instance is null)
-            _instance = new Eraser();
-        return _instance;
-    }
-    
     public Item DoAction(Item item)
     {
-        throw new NotImplementedException();
+        _panelEventRepository.AddEvent(new PanelEvent(PanelEventType.Remove, item));
+        return item;
     }
 }

@@ -1,23 +1,44 @@
-﻿using TerrEditor.Domain;
+﻿using Microsoft.Extensions.DependencyInjection;
+using TerrEditor.Domain;
 using TerrEditor.Domain.Tools;
+using UI.MouseEvent;
 
 namespace TerrEditor.Application;
 
 public class WorkingTools : IWorkingTools
 {
-    private readonly Dictionary<ToolType, ITool> _tools = new();
+    private readonly ServiceProvider _serviceProvider;
+    private readonly ServiceCollection _services;
 
-    public WorkingTools()
+    public WorkingTools(PanelEventRepository panelEventRepository)
     {
-        _tools.Add(ToolType.Eraser, Eraser.GetInstance());
-        _tools.Add(ToolType.Highlighter, new Highlight());
-        _tools.Add(ToolType.Pipette, new Pipette());
-        _tools.Add(ToolType.Turner, Turner.GetInstance());
-        _tools.Add(ToolType.Zoom ,new Zoom());
+        _services = new ServiceCollection();
+        _services.AddSingleton(new Eraser(panelEventRepository));
+        _services.AddSingleton<Zoom>();
+        _services.AddSingleton<Turner>();
     }
-    
-    public ITool GetTool(ToolType toolType)
+
+    public ITool GetTool(ToolType type)
     {
-        return _tools[toolType];
+        using var serviceProvider = _services.BuildServiceProvider();
+        switch (type)
+        {
+            case ToolType.Eraser:
+            {
+                return serviceProvider.GetRequiredService<Eraser>();
+            }
+            case ToolType.Zoom:
+            {
+                return serviceProvider.GetRequiredService<Zoom>();
+            }
+            case ToolType.Turner:
+            {
+                return serviceProvider.GetRequiredService<Turner>();
+            }
+            default:
+            {
+                throw new NotImplementedException($"Not service for {type}");
+            }
+        }
     }
 }

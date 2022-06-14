@@ -7,42 +7,43 @@ namespace UI.MouseEvent;
 
 public class MouseMethods : IMouseMethods
 {
-    public Rectangle DragBoxFromMouseDown { get; private set; }
-    public Image CurrentSelectedImage { get; private set; }
-    private WorkSpace _workSpace;
-    private WorkService _workService;
+    private Rectangle _dragBoxFromMouseDown;
+    private Image _currentSelectedImage;
+    private readonly IWorkSpace _workSpace;
+    private readonly IWorkService _workService;
 
     public MouseMethods(IWorkSpace workSpace, IWorkService service)
     {
-        _workSpace = workSpace as WorkSpace;
-        _workService = service as WorkService;
+        _workSpace = workSpace;
+        _workService = service;
     }
     
     public void Mouse_Down(object sender, MouseEventArgs e)
     {
         var dragSize = SystemInformation.DragSize;
-        DragBoxFromMouseDown = new Rectangle(new Point(e.X - (dragSize.Width / 2),
+        _dragBoxFromMouseDown = new Rectangle(new Point(e.X - (dragSize.Width / 2),
             e.Y - (dragSize.Height / 2)), dragSize);
         switch (sender)
         {
             case Button clickedButton:
             {
-                CurrentSelectedImage = new Bitmap(clickedButton.Image);
+                _currentSelectedImage = new Bitmap(clickedButton.Image);
+                _workService.SetToolType(ToolType.None);
                 break;
             }
             case ItemPictureBox clickedPictureBox:
             {
-                CurrentSelectedImage = new Bitmap(clickedPictureBox.Image);
+                _currentSelectedImage = new Bitmap(clickedPictureBox.Image);
                 break;
             }
             default:
-                DragBoxFromMouseDown = Rectangle.Empty;
+                _dragBoxFromMouseDown = Rectangle.Empty;
                 break;
         }
     }
     public void Mouse_Up(object sender, MouseEventArgs e)
     {
-        DragBoxFromMouseDown = Rectangle.Empty;
+        _dragBoxFromMouseDown = Rectangle.Empty;
     }
     public void Move_Mouse(object sender, MouseEventArgs e)
     {
@@ -50,17 +51,17 @@ public class MouseMethods : IMouseMethods
         {
             case Button clickedButton when e.Button == MouseButtons.Left:
             {
-                if (DragBoxFromMouseDown != Rectangle.Empty && !DragBoxFromMouseDown.Contains(e.X, e.Y))
+                if (_dragBoxFromMouseDown != Rectangle.Empty && !_dragBoxFromMouseDown.Contains(e.X, e.Y))
                 {
-                    clickedButton.DoDragDrop(CurrentSelectedImage, DragDropEffects.All);
+                    clickedButton.DoDragDrop(_currentSelectedImage, DragDropEffects.All);
                 }
                 break;
             }
             case ItemPictureBox pictureBox when e.Button == MouseButtons.Left:
             {
-                if (DragBoxFromMouseDown != Rectangle.Empty && !DragBoxFromMouseDown.Contains(e.X, e.Y))
+                if (_dragBoxFromMouseDown != Rectangle.Empty && !_dragBoxFromMouseDown.Contains(e.X, e.Y))
                 {
-                    pictureBox.DoDragDrop(CurrentSelectedImage, DragDropEffects.All);
+                    pictureBox.DoDragDrop(_currentSelectedImage, DragDropEffects.All);
                     _workSpace.Remove(pictureBox.Item);
                 }
                 break;
@@ -79,10 +80,10 @@ public class MouseMethods : IMouseMethods
         {
             var item = new Item()
             {
-                Image = CurrentSelectedImage,
-                Location = new Point(Cursor.Position.X - MainForm._panel.Location.X - CurrentSelectedImage.Width / 2,
-                    Cursor.Position.Y - MainForm._panel.Location.Y - CurrentSelectedImage.Height / 2),
-                Size = new Size(CurrentSelectedImage.Width, CurrentSelectedImage.Height)
+                Image = _currentSelectedImage,
+                Location = new Point(Cursor.Position.X - MainForm._panel.Location.X - _currentSelectedImage.Width / 2,
+                    Cursor.Position.Y - MainForm._panel.Location.Y - _currentSelectedImage.Height / 2),
+                Size = new Size(_currentSelectedImage.Width, _currentSelectedImage.Height)
             };
             _workSpace.Add(item);
         }
@@ -95,49 +96,10 @@ public class MouseMethods : IMouseMethods
     {
         if (sender is not ItemPictureBox pictureBox) 
             return;
-        if (eventArgs is not MouseEventArgs mouseEventArgs) 
+        if (eventArgs is not MouseEventArgs) 
             return;
         _workService.SetItem(pictureBox.Item);
-        switch (_workService.CurrentToolType)
-        {
-            case ToolType.Eraser:
-            {
-                _workSpace.Remove(pictureBox.Item);
-                break;
-            }
-            case ToolType.Zoom:
-            {
-                if ((mouseEventArgs.Button & MouseButtons.Left) != 0)
-                    Zoom.delta = 40;
-                else if ((mouseEventArgs.Button & MouseButtons.Right) != 0)
-                    Zoom.delta = -40;
-                pictureBox.Size = _workService.DoAction().Size;
-                pictureBox.Image = pictureBox.Image.Resize(pictureBox.Size);
-                break;
-            }
-            case ToolType.Turner:
-            {
-                /*var image = RotateImage(new Bitmap(pictureBox.Image),_service.DoAction().Location);
-                var pb = CreatePictureBox(image);
-                _panel.Controls.Remove(pictureBox);
-                _panel.Controls.Add(pb);*/
-                break;
-            }
-            case ToolType.Flipper:
-            {
-                pictureBox.Image.RotateFlip(RotateFlipType.RotateNoneFlipX);
-                var a = pictureBox.Location;
-                pictureBox.Location = new Point(a.X + 1, a.Y + 1);
-                pictureBox.Location = a;
-                pictureBox.Refresh();
-                break;
-            }
-            case ToolType.Brush:
-                break;
-            case ToolType.Pipette:
-                break;
-            case ToolType.Highlighter:
-                break;
-        }
+        _workSpace.Remove(pictureBox.Item);
+        _workSpace.Add(_workService.DoAction());
     }
 }

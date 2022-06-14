@@ -22,6 +22,7 @@ public class SaveLoadService
     public void Save(object sender, EventArgs eventArgs)
     {
         var saveFileDialog = new SaveFileDialog();
+        saveFileDialog.InitialDirectory = "c:\\";
         saveFileDialog.Filter = "default files (*.fuf)|*.fuf";
         saveFileDialog.FilterIndex = 2;
         saveFileDialog.RestoreDirectory = true;
