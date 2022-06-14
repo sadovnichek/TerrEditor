@@ -5,14 +5,14 @@ namespace TerrEditor.Application;
 
 public class WorkService : IWorkService
 {
-    private readonly WorkingTools _tools;
+    private readonly IWorkingTools _tools;
     private ITool _currentTool;
     private Item _currentItem;
     public ToolType CurrentToolType;
     
     public WorkService(IWorkingTools tools)
     {
-        _tools = tools as WorkingTools;
+        _tools = tools;
     }
 
     public void SetItem(Item item)

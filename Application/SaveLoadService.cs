@@ -1,33 +1,52 @@
 ﻿using System.Runtime.Serialization.Formatters.Binary;
+using System.Windows.Forms;
 using TerrEditor.Domain;
+using TerrEditor.Domain.Formats;
 
 namespace TerrEditor.Application;
 
 public class SaveLoadService
 {
-    private readonly WorkSpace _workSpace;
+    private readonly IWorkSpace _workSpace;
+    private readonly Dictionary<string, IFormat> _formats;
     
     public SaveLoadService(IWorkSpace workSpace)
     {
-        _workSpace = workSpace as WorkSpace;
+        _workSpace = workSpace;
+        _formats = new Dictionary<string, IFormat>()
+        {
+            {".fuf", new FufFormat()}
+        };
     }
     
     public void Save(object sender, EventArgs eventArgs)
     {
-        using Stream stream = File.Open("saved.bin", FileMode.Create);
-        var binaryFormatter = new BinaryFormatter();
-        binaryFormatter.Serialize(stream, _workSpace.Objects);
+        var saveFileDialog = new SaveFileDialog();
+        saveFileDialog.Filter = "default files (*.fuf)|*.fuf";
+        saveFileDialog.FilterIndex = 2;
+        saveFileDialog.RestoreDirectory = true;
+        if(saveFileDialog.ShowDialog() == DialogResult.OK)
+        {
+            var selectedFile = saveFileDialog.FileName;
+            var extention = Path.GetExtension(selectedFile);
+            _formats[extention].Write(selectedFile, _workSpace.GetItems());
+        }
     }
     
     public void Load(object sender, EventArgs eventArgs)
     {
-        using Stream stream = File.Open("saved.bin", FileMode.Open);
-        var binaryFormatter = new BinaryFormatter();
-        var items = (List<Item>)binaryFormatter.Deserialize(stream);
-        _workSpace.Clear();
-        items.ForEach(item =>
+        using var openFileDialog = new OpenFileDialog();
+        openFileDialog.InitialDirectory = "c:\\";
+        openFileDialog.Filter = "default files (*.fuf)|*.fuf";
+        openFileDialog.FilterIndex = 2;
+        openFileDialog.RestoreDirectory = true;
+        if (openFileDialog.ShowDialog() == DialogResult.OK)
         {
-            _workSpace.Add(item);
-        });
+            var selectedFile = openFileDialog.FileName;
+            var extention = Path.GetExtension(selectedFile);
+            var items = _formats[extention].Read(selectedFile);
+            _workSpace.Clear();
+            items.ForEach(item => _workSpace.Add(item));
+        }
     }
 }

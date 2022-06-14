@@ -1,4 +1,3 @@
-using System.Drawing.Drawing2D;
 using TerrEditor.Application;
 using TerrEditor.Domain.Tools;
 using UI.Buttons;
@@ -14,8 +13,8 @@ namespace UI;
 public partial class MainForm
 {
     public static Panel _panel;
-    private WorkService _workService;
-    private MouseMethods _mouseMethods;
+    private IWorkService _workService;
+    private IMouseMethods _mouseMethods;
     private readonly BitmapRepository _assets = new(new("assets"));
     private readonly BitmapRepository _tools = new(new("tools"));
     private readonly BitmapRepository _backs = new(new("background"));
@@ -29,8 +28,8 @@ public partial class MainForm
     {
         WindowState = FormWindowState.Maximized;
         _panelEventRepository = panelEventRepository;
-        _workService = service as WorkService;
-        _mouseMethods = mouseMethods as MouseMethods;
+        _workService = service;
+        _mouseMethods = mouseMethods;
         _saveLoadService = saveLoadService;
         InitializeComponent();
         _assets.GetImages();
@@ -43,7 +42,6 @@ public partial class MainForm
         ConfigureToolButtons();
         ConfigureSaveLoadButtons();
         ConfigureChangeBackgroundButton();
-        
     }
     
     private void ConfigurePanel()

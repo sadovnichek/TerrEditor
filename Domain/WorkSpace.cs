@@ -4,34 +4,39 @@ namespace TerrEditor.Domain;
 
 public class WorkSpace : IWorkSpace
 {
-    public readonly List<Item> Objects;
+    private readonly List<Item> _objects;
     private PanelEventRepository _panelEventRepository;
 
     public WorkSpace(PanelEventRepository panelEventRepository)
     {
-        Objects = new List<Item>();
+        _objects = new List<Item>();
         _panelEventRepository = panelEventRepository;
     }
 
     public void Add(Item item)
     {
-        Objects.Add(item);
+        _objects.Add(item);
         _panelEventRepository.AddEvent(new PanelEvent(PanelEventType.Add, item));
     }
 
     public void Remove(Item item)
     {
-        Objects.Remove(item);
+        _objects.Remove(item);
         _panelEventRepository.AddEvent(new PanelEvent(PanelEventType.Remove, item));
     }
-
+    
     public void Clear()
     {
-        while(Objects.Count > 0)
+        while(_objects.Count > 0)
         {
-            var item = Objects.First();
-            Objects.Remove(item);
+            var item = _objects.First();
+            _objects.Remove(item);
             _panelEventRepository.AddEvent(new PanelEvent(PanelEventType.Remove, item));
         }
+    }
+
+    public List<Item> GetItems()
+    {
+        return _objects;
     }
 }
