@@ -7,7 +7,7 @@ namespace TerrEditor.Application;
 
 public class WorkingTools : IWorkingTools
 {
-    private readonly ServiceProvider _serviceProvider;
+    private readonly IServiceProvider _serviceProvider;
     private readonly ServiceCollection _services;
 
     public WorkingTools(PanelEventRepository panelEventRepository)
@@ -16,24 +16,24 @@ public class WorkingTools : IWorkingTools
         _services.AddSingleton(new Eraser(panelEventRepository));
         _services.AddSingleton<Zoom>();
         _services.AddSingleton<Turner>();
+        _serviceProvider = _services.BuildServiceProvider();
     }
 
     public ITool GetTool(ToolType type)
     {
-        using var serviceProvider = _services.BuildServiceProvider();
         switch (type)
         {
             case ToolType.Eraser:
             {
-                return serviceProvider.GetRequiredService<Eraser>();
+                return _serviceProvider.GetRequiredService<Eraser>();
             }
             case ToolType.Zoom:
             {
-                return serviceProvider.GetRequiredService<Zoom>();
+                return _serviceProvider.GetRequiredService<Zoom>();
             }
             case ToolType.Turner:
             {
-                return serviceProvider.GetRequiredService<Turner>();
+                return _serviceProvider.GetRequiredService<Turner>();
             }
             default:
             {
