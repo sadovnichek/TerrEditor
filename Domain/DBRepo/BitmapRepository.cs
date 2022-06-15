@@ -1,4 +1,5 @@
 ﻿using System.Drawing;
+using System.Windows.Forms;
 using MySql.Data.MySqlClient;
 using TerrEditor.Domain.DataBase;
 using TerrEditor.Domain.DBRepo;
@@ -17,6 +18,6 @@ public class BitmapRepository:IImageRepo
     }
     public void GetImages()
     {
-        ParsedDBInfo=_core.ParseInfoFromDB();
+        ParsedDBInfo = _core.ParseInfoFromDB();
     }
 }

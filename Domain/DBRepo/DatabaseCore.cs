@@ -1,4 +1,5 @@
 ﻿using System.Drawing;
+using System.Windows.Forms;
 using MySql.Data.MySqlClient;
 using TerrEditor.Domain.DataBase;
 
@@ -7,12 +8,10 @@ namespace TerrEditor.Domain.DBRepo;
 public class DatabaseCore
 {
     private  long _dbSize;
-    private string _name;
-    private readonly Dictionary<string, Bitmap> _parsedDbInfo=new();
+    private readonly string _name;
+    private readonly Dictionary<string, Bitmap> _parsedDbInfo = new();
     private MySqlConnection _dBConn;
     
-    
-
     public DatabaseCore(string name)
     {
         _name = name;
@@ -25,13 +24,19 @@ public class DatabaseCore
     }
     public Dictionary<string, Bitmap> ParseInfoFromDB()
     {
-        
-        _dBConn = new DBUtils().GetDBConnection();
-        _dBConn.Open();
-        _dbSize = getDBSize();
+        try
+        {
+            _dBConn = new DBUtils().GetDBConnection();
+            _dBConn.Open();
+            _dbSize = getDBSize();
+        }
+        catch(MySqlException e)
+        {
+            MessageBox.Show("Error occurs while connecting to database. Please check your internet connection",
+                "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        }
         for (var id = 1; id <= _dbSize; id++)
         {
-            
             string request = $"SELECT image, name FROM {_name} WHERE id = {id}";
             MySqlCommand resp = new MySqlCommand(request, _dBConn);
             MySqlDataReader datareader = resp.ExecuteReader();

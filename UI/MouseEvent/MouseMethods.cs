@@ -98,8 +98,7 @@ public class MouseMethods : IMouseMethods
             return;
         if (eventArgs is not MouseEventArgs) 
             return;
-        _workService.SetItem(pictureBox.Item);
         _workSpace.Remove(pictureBox.Item);
-        _workSpace.Add(_workService.DoAction());
+        _workSpace.Add(_workService.DoAction(pictureBox.Item));
     }
 }

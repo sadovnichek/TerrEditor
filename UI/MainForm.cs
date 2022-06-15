@@ -62,7 +62,7 @@ public partial class MainForm
         _panel.MouseWheel += Clicked;
         Controls.Add(_panel);
     }
-
+    
     private void ConfigureChangeBackgroundButton()
     {
         var changeBackgroundButton = new Button
