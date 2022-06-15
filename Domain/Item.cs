@@ -1,20 +1,19 @@
-﻿using System;
-using System.Drawing;
-
-namespace TerrEditor.Domain;
+﻿namespace TerrEditor.Domain;
 
 [Serializable]
 public class Item
 {
     public Guid Id = Guid.NewGuid();
-    public Point Location { get; set; }
+    public Point2D Location { get; set; }
     public Size Size { get; set; }
-    public Image Image { get; set; }
     
-    public Item(Point location, Size size)
+    public string ImageName { get; private set; }
+
+    public Item(Point2D location, Size size, string imageName)
     {
         Location = location;
         Size = size;
+        ImageName = imageName;
     }
 
     public Item()

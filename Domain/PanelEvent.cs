@@ -1,6 +1,4 @@
-﻿using TerrEditor.Domain;
-
-namespace UI.MouseEvent;
+﻿namespace TerrEditor.Domain;
 
 public enum PanelEventType
 {

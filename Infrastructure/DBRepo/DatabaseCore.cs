@@ -1,9 +1,8 @@
 ﻿using System.Drawing;
-using System.Windows.Forms;
 using MySql.Data.MySqlClient;
-using TerrEditor.Domain.DataBase;
+using TerrEditor.Infrastructure.DataBase;
 
-namespace TerrEditor.Domain.DBRepo;
+namespace TerrEditor.Infrastructure.DBRepo;
 
 public class DatabaseCore
 {
@@ -32,8 +31,7 @@ public class DatabaseCore
         }
         catch(MySqlException e)
         {
-            MessageBox.Show("Error occurs while connecting to database. Please check your internet connection",
-                "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            throw new Exception("Error occurs while connecting to database. Please check your internet connection");
         }
         for (var id = 1; id <= _dbSize; id++)
         {

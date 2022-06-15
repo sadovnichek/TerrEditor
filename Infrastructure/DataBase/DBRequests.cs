@@ -1,7 +1,7 @@
 using System.Drawing;
 using MySql.Data.MySqlClient;
 
-namespace TerrEditor.Domain.DataBase
+namespace TerrEditor.Infrastructure.DataBase
 {
     public class DBReqs
     {

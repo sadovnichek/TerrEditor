@@ -1,5 +1,4 @@
-﻿using System.Runtime.Serialization.Formatters.Binary;
-using System.Windows.Forms;
+﻿using System.Windows.Forms;
 using TerrEditor.Domain;
 using TerrEditor.Domain.Formats;
 

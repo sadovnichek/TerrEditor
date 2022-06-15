@@ -1,21 +1,18 @@
-﻿using TerrEditor.Application;
-using TerrEditor.Domain;
-using TerrEditor.Domain.Tools;
-using TerrEditor.Infrastructure;
+﻿using TerrEditor.Domain;
+using Size = TerrEditor.Domain.Size;
 
-namespace UI.MouseEvent;
+namespace UI;
 
-public class MouseMethods : IMouseMethods
+public class MouseMethods
 {
     private Rectangle _dragBoxFromMouseDown;
     private Image _currentSelectedImage;
+    private string _currentSelectedImageName = "";
     private readonly IWorkSpace _workSpace;
-    private readonly IWorkService _workService;
 
-    public MouseMethods(IWorkSpace workSpace, IWorkService service)
+    public MouseMethods(IWorkSpace workSpace)
     {
         _workSpace = workSpace;
-        _workService = service;
     }
     
     public void Mouse_Down(object sender, MouseEventArgs e)
@@ -28,12 +25,13 @@ public class MouseMethods : IMouseMethods
             case Button clickedButton:
             {
                 _currentSelectedImage = new Bitmap(clickedButton.Image);
-                _workService.SetToolType(ToolType.None);
+                _currentSelectedImageName = clickedButton.Name;
                 break;
             }
             case ItemPictureBox clickedPictureBox:
             {
                 _currentSelectedImage = new Bitmap(clickedPictureBox.Image);
+                _currentSelectedImageName = clickedPictureBox.Item.ImageName;
                 break;
             }
             default:
@@ -78,14 +76,11 @@ public class MouseMethods : IMouseMethods
     {
         if (e.Effect == DragDropEffects.Move)
         {
-            var item = new Item()
-            {
-                Image = _currentSelectedImage,
-                Location = new Point(Cursor.Position.X - MainForm._panel.Location.X - _currentSelectedImage.Width / 2,
-                    Cursor.Position.Y - MainForm._panel.Location.Y - _currentSelectedImage.Height / 2),
-                Size = new Size(_currentSelectedImage.Width, _currentSelectedImage.Height)
-            };
-            _workSpace.Add(item);
+            var location = new Point2D(Cursor.Position.X - MainForm._panel.Location.X - _currentSelectedImage.Width / 2,
+                Cursor.Position.Y - MainForm._panel.Location.Y - _currentSelectedImage.Height / 2);
+            var size = new Size(_currentSelectedImage.Width, _currentSelectedImage.Height);
+            var imageName = _currentSelectedImageName;
+            _workSpace.Add(new Item(location, size, imageName));
         }
     }
     public void Drag_Enter(object sender, DragEventArgs e)
@@ -99,6 +94,5 @@ public class MouseMethods : IMouseMethods
         if (eventArgs is not MouseEventArgs) 
             return;
         _workSpace.Remove(pictureBox.Item);
-        _workSpace.Add(_workService.DoAction(pictureBox.Item));
     }
 }

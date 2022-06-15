@@ -1,4 +1,4 @@
-﻿namespace TerrEditor.Domain.Tools;
+﻿namespace TerrEditor.Domain;
 
 public enum ToolType
 {

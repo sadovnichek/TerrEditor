@@ -1,4 +1,4 @@
-﻿namespace UI.MouseEvent;
+﻿namespace TerrEditor.Domain;
 
 public class PanelEventRepository
 {

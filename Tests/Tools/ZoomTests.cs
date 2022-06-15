@@ -2,7 +2,7 @@ using System.Drawing;
 using FluentAssertions;
 using NUnit.Framework;
 using TerrEditor.Domain;
-using TerrEditor.Domain.Tools;
+using Size = System.Drawing.Size;
 
 namespace Tests.Tools;
 

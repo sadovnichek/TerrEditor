@@ -1,6 +1,4 @@
-﻿using System.Drawing;
-
-namespace TerrEditor.Domain.Tools;
+﻿namespace TerrEditor.Infrastructure.DBRepo;
 
 public interface IImageRepo
 {

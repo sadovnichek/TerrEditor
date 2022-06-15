@@ -1,8 +1,6 @@
 using FluentAssertions;
 using NUnit.Framework;
 using TerrEditor.Domain;
-using TerrEditor.Domain.Tools;
-using UI.MouseEvent;
 
 namespace Tests.Tools;
 

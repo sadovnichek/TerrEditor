@@ -1,6 +1,6 @@
 using MySql.Data.MySqlClient;
 
-namespace TerrEditor.Domain.DataBase
+namespace TerrEditor.Infrastructure.DataBase
 {
     public class DBUtils
     {

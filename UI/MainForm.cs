@@ -1,11 +1,9 @@
 using TerrEditor.Application;
-using TerrEditor.Domain.Tools;
 using UI.Buttons;
 using TerrEditor.Domain;
-using TerrEditor.Domain.DataBase;
-using TerrEditor.Domain.DBRepo;
 using TerrEditor.Infrastructure;
-using UI.MouseEvent;
+using TerrEditor.Infrastructure.DBRepo;
+using Size = System.Drawing.Size;
 using Timer = System.Windows.Forms.Timer;
 
 namespace UI;
@@ -13,22 +11,19 @@ namespace UI;
 public partial class MainForm
 {
     public static Panel _panel;
-    private IWorkService _workService;
-    private IMouseMethods _mouseMethods;
+    private MouseMethods _mouseMethods;
     private readonly BitmapRepository _assets = new(new("assets"));
     private readonly BitmapRepository _tools = new(new("tools"));
     private readonly BitmapRepository _backs = new(new("background"));
     private PanelEventRepository _panelEventRepository;
     private SaveLoadService _saveLoadService;
     
-    public MainForm(IWorkService service,
-        IMouseMethods mouseMethods, 
+    public MainForm(MouseMethods mouseMethods, 
         PanelEventRepository panelEventRepository,
         SaveLoadService saveLoadService)
     {
         WindowState = FormWindowState.Maximized;
         _panelEventRepository = panelEventRepository;
-        _workService = service;
         _mouseMethods = mouseMethods;
         _saveLoadService = saveLoadService;
         InitializeComponent();
@@ -59,7 +54,6 @@ public partial class MainForm
         _panel.DragOver += _mouseMethods.Drag_Over!;
         _panel.DragDrop += _mouseMethods.Drag_Drop!;
         _panel.DragEnter += _mouseMethods.Drag_Enter!;
-        _panel.MouseWheel += Clicked;
         Controls.Add(_panel);
     }
     
@@ -94,41 +88,7 @@ public partial class MainForm
         yield return _backs.ParsedDBInfo["back3"];
         yield return _backs.ParsedDBInfo["backMain"];
     }
-    
-    private void Clicked(object? sender, MouseEventArgs e)
-    {
-        if (e.Delta > 0)
-        {
-            foreach (var a in _panel.Controls)
-            {
-                
-                if (a is not ItemPictureBox item) continue;
-                item.Size=new Size(item.Width+5, item.Height+5);
-                item.Image = item.Image.Resize(item.Size);
 
-            }
-            
-            _panel.Size = new Size(_panel.Width+20, _panel.Height+20);
-        }
-        
-        else
-        {
-            foreach (var a in _panel.Controls)
-            {
-                
-                if (a is not ItemPictureBox item) continue;
-                if (item.Size.Width <= 20 || item.Size.Height <= 20) break;
-                item.Size=new Size(item.Width-5, item.Height-5);
-                item.Image = item.Image.Resize(item.Size);
-
-            }
-            if (_panel.Size.Width <= 100 || _panel.Size.Height <= 100) return;
-            
-            _panel.Size = new Size(_panel.Width-20, _panel.Height-20);
-
-        }
-    }
-    
     private void SetLabels()
     {
         var itemsLabel = new Label();
@@ -149,12 +109,9 @@ public partial class MainForm
 
     private void ConfigureToolButtons()
     {
-        Controls.Add(new ToolButton(new Rectangle(300, 50, 50, 50), _tools.ParsedDBInfo["eraser"], ToolType.Eraser,
-        _workService));
-        Controls.Add(new ToolButton(new Rectangle(350, 50, 50, 50), _tools.ParsedDBInfo["zoom"], ToolType.Zoom,
-            _workService));
-        Controls.Add(new ToolButton(new Rectangle(400, 50, 50, 50), _tools.ParsedDBInfo["trans"], ToolType.Turner,
-            _workService));
+        Controls.Add(new ToolButton(new Rectangle(300, 50, 50, 50), _tools.ParsedDBInfo["eraser"], ToolType.Eraser));
+        Controls.Add(new ToolButton(new Rectangle(350, 50, 50, 50), _tools.ParsedDBInfo["zoom"], ToolType.Zoom));
+        Controls.Add(new ToolButton(new Rectangle(400, 50, 50, 50), _tools.ParsedDBInfo["trans"], ToolType.Turner));
     }
 
     private void ConfigureSaveLoadButtons()
@@ -186,7 +143,9 @@ public partial class MainForm
             {
                 case PanelEventType.Add:
                 {
-                    _panel.Controls.Add(new ItemPictureBox(@event.Item, _mouseMethods));
+                    _panel.Controls.Add(new ItemPictureBox(@event.Item, 
+                        _assets.ParsedDBInfo[@event.Item.ImageName], 
+                        _mouseMethods));
                     break;
                 }
                 case PanelEventType.Remove:

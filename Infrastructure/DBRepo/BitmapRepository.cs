@@ -1,11 +1,6 @@
 ﻿using System.Drawing;
-using System.Windows.Forms;
-using MySql.Data.MySqlClient;
-using TerrEditor.Domain.DataBase;
-using TerrEditor.Domain.DBRepo;
-using TerrEditor.Domain.Tools;
 
-namespace TerrEditor.Domain;
+namespace TerrEditor.Infrastructure.DBRepo;
 
 public class BitmapRepository:IImageRepo
 {

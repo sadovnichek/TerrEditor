@@ -1,6 +1,4 @@
-﻿using UI.MouseEvent;
-
-namespace TerrEditor.Domain;
+﻿namespace TerrEditor.Domain;
 
 public class WorkSpace : IWorkSpace
 {
