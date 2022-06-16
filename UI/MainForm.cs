@@ -16,12 +16,12 @@ public partial class MainForm
     private readonly BitmapRepository _tools = new(new("tools"));
     private readonly BitmapRepository _backs = new(new("background"));
     private PanelEventRepository _panelEventRepository;
-    private SaveLoadService _saveLoadService;
+    private ISaveLoadService _saveLoadService;
     private ToolHandler _toolHandler;
     
     public MainForm(MouseMethods mouseMethods, 
         PanelEventRepository panelEventRepository,
-        SaveLoadService saveLoadService,
+        ISaveLoadService saveLoadService,
         ToolHandler toolHandler)
     {
         WindowState = FormWindowState.Maximized;

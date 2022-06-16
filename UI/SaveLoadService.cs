@@ -1,15 +1,15 @@
-﻿using System.Windows.Forms;
+﻿using TerrEditor.Application;
 using TerrEditor.Domain;
 using TerrEditor.Domain.Formats;
 
-namespace TerrEditor.Application;
+namespace UI;
 
-public class SaveLoadService
+public class SaveLoadServiceForms : ISaveLoadService
 {
     private readonly IWorkSpace _workSpace;
     private readonly Dictionary<string, IFormat> _formats;
     
-    public SaveLoadService(IWorkSpace workSpace)
+    public SaveLoadServiceForms(IWorkSpace workSpace)
     {
         _workSpace = workSpace;
         _formats = new Dictionary<string, IFormat>()

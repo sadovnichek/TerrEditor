@@ -1,5 +1,6 @@
 ﻿namespace TerrEditor.Domain;
 
+[Serializable]
 public class Size
 {
     public int Width { get; }

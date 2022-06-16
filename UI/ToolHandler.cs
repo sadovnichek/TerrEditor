@@ -31,7 +31,7 @@ public class ToolHandler
             }
             case ToolType.Zoom:
             {
-                _workSpace.Remove(pictureBox.Item);
+                //_workSpace.Remove(pictureBox.Item);
                 var newItem = new Item(pictureBox.Item.Location, 
                     new Size(pictureBox.Item.Size.Width + 100, pictureBox.Item.Size.Height + 100), 
                     pictureBox.Item.ImageName);
