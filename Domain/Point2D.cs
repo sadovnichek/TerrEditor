@@ -1,5 +1,6 @@
 ﻿namespace TerrEditor.Domain;
 
+[Serializable]
 public class Point2D
 {
     public int X { get; }

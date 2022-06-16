@@ -1,4 +1,6 @@
 ﻿using TerrEditor.Domain;
+using TerrEditor.Infrastructure;
+using Size = System.Drawing.Size;
 using Timer = System.Windows.Forms.Timer;
 
 namespace UI;
@@ -13,7 +15,7 @@ public sealed class ItemPictureBox : Control
     {
         Item = item;
         Name = item.Id.ToString();
-        Image = image;
+        Image = image.Resize(new Size(item.Size.Width, item.Size.Height));
         Width = item.Size.Width;
         Height = item.Size.Height;
         Location = new Point(item.Location.X, item.Location.Y);

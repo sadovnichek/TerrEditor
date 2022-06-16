@@ -15,9 +15,4 @@ public class Item
         Size = size;
         ImageName = imageName;
     }
-
-    public Item()
-    {
-        
-    }
 }

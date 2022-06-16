@@ -9,10 +9,12 @@ public class MouseMethods
     private Image _currentSelectedImage;
     private string _currentSelectedImageName = "";
     private readonly IWorkSpace _workSpace;
+    private readonly ToolHandler _toolHandler;
 
-    public MouseMethods(IWorkSpace workSpace)
+    public MouseMethods(IWorkSpace workSpace, ToolHandler toolHandler)
     {
         _workSpace = workSpace;
+        _toolHandler = toolHandler;
     }
     
     public void Mouse_Down(object sender, MouseEventArgs e)
@@ -20,6 +22,8 @@ public class MouseMethods
         var dragSize = SystemInformation.DragSize;
         _dragBoxFromMouseDown = new Rectangle(new Point(e.X - (dragSize.Width / 2),
             e.Y - (dragSize.Height / 2)), dragSize);
+        if (_toolHandler.ToolType != ToolType.None)
+            return;
         switch (sender)
         {
             case Button clickedButton:
@@ -93,6 +97,6 @@ public class MouseMethods
             return;
         if (eventArgs is not MouseEventArgs) 
             return;
-        _workSpace.Remove(pictureBox.Item);
+        _toolHandler.DoAction(pictureBox);
     }
 }

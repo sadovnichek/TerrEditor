@@ -33,6 +33,7 @@ internal static class Program
         services.AddSingleton<MouseMethods>();
         services.AddSingleton<PanelEventRepository>();
         services.AddSingleton<SaveLoadService>();
+        services.AddSingleton<ToolHandler>(); // interface???
         services.AddScoped<MainForm>();
     }
 }

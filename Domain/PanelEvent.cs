@@ -3,7 +3,8 @@
 public enum PanelEventType
 {
     Add,
-    Remove
+    Remove,
+    RotateItem
 }
 
 public class PanelEvent

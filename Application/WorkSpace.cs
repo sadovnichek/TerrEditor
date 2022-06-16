@@ -1,4 +1,6 @@
-﻿namespace TerrEditor.Domain;
+﻿using TerrEditor.Domain;
+
+namespace TerrEditor.Application;
 
 public class WorkSpace : IWorkSpace
 {
@@ -36,5 +38,10 @@ public class WorkSpace : IWorkSpace
     public List<Item> GetItems()
     {
         return _objects;
+    }
+
+    public void RotateItem(Item item)
+    {
+        _panelEventRepository.AddEvent(new PanelEvent(PanelEventType.RotateItem, item));
     }
 }

@@ -17,15 +17,18 @@ public partial class MainForm
     private readonly BitmapRepository _backs = new(new("background"));
     private PanelEventRepository _panelEventRepository;
     private SaveLoadService _saveLoadService;
+    private ToolHandler _toolHandler;
     
     public MainForm(MouseMethods mouseMethods, 
         PanelEventRepository panelEventRepository,
-        SaveLoadService saveLoadService)
+        SaveLoadService saveLoadService,
+        ToolHandler toolHandler)
     {
         WindowState = FormWindowState.Maximized;
         _panelEventRepository = panelEventRepository;
         _mouseMethods = mouseMethods;
         _saveLoadService = saveLoadService;
+        _toolHandler = toolHandler;
         InitializeComponent();
         _assets.GetImages();
         _tools.GetImages();
@@ -109,9 +112,9 @@ public partial class MainForm
 
     private void ConfigureToolButtons()
     {
-        Controls.Add(new ToolButton(new Rectangle(300, 50, 50, 50), _tools.ParsedDBInfo["eraser"], ToolType.Eraser));
-        Controls.Add(new ToolButton(new Rectangle(350, 50, 50, 50), _tools.ParsedDBInfo["zoom"], ToolType.Zoom));
-        Controls.Add(new ToolButton(new Rectangle(400, 50, 50, 50), _tools.ParsedDBInfo["trans"], ToolType.Turner));
+        Controls.Add(new ToolButton(new Rectangle(300, 50, 50, 50), _tools.ParsedDBInfo["eraser"], ToolType.Eraser, _toolHandler));
+        Controls.Add(new ToolButton(new Rectangle(350, 50, 50, 50), _tools.ParsedDBInfo["zoom"], ToolType.Zoom, _toolHandler));
+        Controls.Add(new ToolButton(new Rectangle(400, 50, 50, 50), _tools.ParsedDBInfo["trans"], ToolType.Turner, _toolHandler));
     }
 
     private void ConfigureSaveLoadButtons()
@@ -151,6 +154,14 @@ public partial class MainForm
                 case PanelEventType.Remove:
                 {
                     _panel.Controls.RemoveByKey(@event.Item.Id.ToString());
+                    break;
+                }
+                case PanelEventType.RotateItem:
+                {
+                    var pictureBox = (ItemPictureBox)_panel.Controls.Find(@event.Item.Id.ToString(), false).First();
+                    pictureBox.Image.RotateFlip(RotateFlipType.Rotate90FlipX);
+                    _panel.Controls.RemoveByKey(@event.Item.Id.ToString());
+                    _panel.Controls.Add(pictureBox);
                     break;
                 }
             }

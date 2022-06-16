@@ -6,4 +6,5 @@ public interface IWorkSpace
     void Remove(Item item);
     List<Item> GetItems();
     void Clear();
+    void RotateItem(Item item);
 }
