@@ -1,7 +1,6 @@
 using TerrEditor.Application;
 using TerrEditor.Domain;
 using Microsoft.Extensions.DependencyInjection;
-using UI.MouseEvent;
 
 namespace UI;
 
@@ -18,17 +17,23 @@ internal static class Program
         ConfigureServices(services);
         using var serviceProvider = services.BuildServiceProvider();
         var form = serviceProvider.GetRequiredService<MainForm>();
-        Application.Run(form);
+        try
+        {
+            Application.Run(form);
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        }
     }
 
     private static void ConfigureServices(IServiceCollection services)
     {
         services.AddSingleton<IWorkSpace, WorkSpace>();
-        services.AddSingleton<IWorkService, WorkService>();
-        services.AddSingleton<IWorkingTools, WorkingTools>();
-        services.AddSingleton<IMouseMethods, MouseMethods>();
+        services.AddSingleton<MouseMethods>();
         services.AddSingleton<PanelEventRepository>();
-        services.AddSingleton<SaveLoadService>();
+        services.AddSingleton<ISaveLoadService, SaveLoadServiceForms>();
+        services.AddSingleton<ToolHandler>();
         services.AddScoped<MainForm>();
     }
 }

@@ -3,5 +3,8 @@
 public interface IFormat
 {
     string Name { get; }
-    void Read(string filename);
+    
+    List<Item> Read(string filename);
+
+    void Write(string filename, List<Item> items);
 }

@@ -1,4 +1,6 @@
 ﻿using TerrEditor.Domain;
+using TerrEditor.Infrastructure;
+using Size = System.Drawing.Size;
 using Timer = System.Windows.Forms.Timer;
 
 namespace UI;
@@ -6,24 +8,24 @@ namespace UI;
 public sealed class ItemPictureBox : Control
 {
     private readonly Timer _refresher;
-    public Image Image { get; set; }
+    public Image Image { get; }
 
     public Item Item;
-    public ItemPictureBox(Item item, IMouseMethods mouseMethods)
+    public ItemPictureBox(Item item, Image image, MouseMethods mouseMethods)
     {
         Item = item;
         Name = item.Id.ToString();
-        Image = item.Image;
+        Image = image.Resize(new Size(item.Size.Width, item.Size.Height));
         Width = item.Size.Width;
         Height = item.Size.Height;
-        Location = item.Location;
+        Location = new Point(item.Location.X, item.Location.Y);
         SetStyle(ControlStyles.SupportsTransparentBackColor, true);
         BackColor = Color.Transparent;
         Visible = true;
         MouseDown += mouseMethods.Mouse_Down!;
         MouseUp += mouseMethods.Mouse_Up!;
         MouseMove += mouseMethods.Move_Mouse!;
-        Click += mouseMethods.OnPictureBoxClick;
+        Click += mouseMethods.OnPictureBoxClick!;
         _refresher = new Timer();
         _refresher.Tick += TimerOnTick!;
         _refresher.Interval = 10;
